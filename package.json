@@ -1,0 +1,14 @@
+{
+  "name": "mesaos-template",
+  "version": "1.0.0-pilot.2",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "python3 -m http.server 4187 --bind 127.0.0.1",
+    "build": "node scripts/build.cjs",
+    "test": "node --test tests/menu.test.cjs tests/sales.test.cjs tests/cash.test.cjs tests/tips.test.cjs tests/printing.test.cjs tests/removal.test.cjs",
+    "test:browser": "node tests/compat/browser.test.cjs && node tests/compat/cash-browser.test.cjs",
+    "check": "node scripts/check.cjs"
+  },
+  "devDependencies": { "playwright": "1.64.1" }
+}

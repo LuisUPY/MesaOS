@@ -1,0 +1,14 @@
+#template-notice {padding:18px 24px;background:var(--forest);color:var(--primary-contrast,#fff);font-size:14px;line-height:1.6;text-align:center;}
+.brand {width:180px;gap:0;text-decoration:none;}
+.brand img {width:180px;height:72px;object-fit:contain;max-width:100%;}
+
+.page-footer {flex-wrap:wrap;gap:14px;}
+#restaurant-tagline:empty {display:none;}
+.platform-credit {display:flex;align-items:center;margin-inline-start:auto;}
+.platform-credit img {width:90px;height:46px;object-fit:contain;}
+.primary-button,.macro-tab[aria-selected="true"],.label-preset[aria-pressed="true"],.cash-summary-row.expected,.mobile-order-link {color:var(--primary-contrast,#fff);}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible {outline-color:var(--rose);}
+@media(max-width:700px){.brand{width:150px;max-width:calc(100% - 105px);height:56px;}.brand img{height:56px;max-width:100%;}#template-notice{font-size:12px;padding:14px;}}
+
+.template-product.price-pending {background:var(--paper);}
+.template-product.price-pending .product-price {color:var(--muted);font-weight:400;}

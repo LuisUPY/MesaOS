@@ -1,0 +1,11 @@
+{
+  "name": "MesaOS",
+  "short_name": "MesaOS",
+  "description": "Plantilla maestra POS",
+  "display": "standalone",
+  "start_url": "./",
+  "scope": "./",
+  "background_color": "#fffefa",
+  "theme_color": "#182A24",
+  "lang": "es-MX"
+}

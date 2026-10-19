@@ -1,0 +1,438 @@
+{
+  "schemaVersion": 1,
+  "restaurant": {
+    "id": "mesaos-template",
+    "name": "",
+    "logo": "",
+    "currency": "MXN",
+    "locale": "es-MX",
+    "timezone": "America/Merida",
+    "address": "",
+    "phone": "",
+    "welcome": "",
+    "tagline": ""
+  },
+  "theme": {
+    "primary": "#182A24",
+    "accent": "#D4A373"
+  },
+  "ticket": {
+    "header": "",
+    "footer": "Gracias por tu visita.",
+    "menuPdf": ""
+  },
+  "menu": {
+    "Entradas": {
+      "Para compartir": [
+        {
+          "id": "template-1-1-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-1-1-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ]
+    },
+    "Bebidas": {
+      "Aguas naturales": [
+        {
+          "id": "template-2-1-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-2-1-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Bebidas rellenables": [
+        {
+          "id": "template-2-2-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-2-2-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Jugos nutritivos": [
+        {
+          "id": "template-2-3-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-2-3-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Cafés": [
+        {
+          "id": "template-2-4-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-2-4-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Sin café": [
+        {
+          "id": "template-2-5-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-2-5-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Lattes saborizados": [
+        {
+          "id": "template-2-6-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-2-6-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Lattes Amor": [
+        {
+          "id": "template-2-7-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-2-7-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Sodas italianas": [
+        {
+          "id": "template-2-8-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-2-8-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Licuados": [
+        {
+          "id": "template-2-9-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-2-9-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Frappés": [
+        {
+          "id": "template-2-10-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-2-10-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Malteadas": [
+        {
+          "id": "template-2-11-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-2-11-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ]
+    },
+    "Alimentos": {
+      "Pastas": [
+        {
+          "id": "template-3-1-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-3-1-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Hot cakes": [
+        {
+          "id": "template-3-2-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-3-2-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Toast": [
+        {
+          "id": "template-3-3-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-3-3-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Sándwiches": [
+        {
+          "id": "template-3-4-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-3-4-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Croissants": [
+        {
+          "id": "template-3-5-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-3-5-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Huevos y omelettes": [
+        {
+          "id": "template-3-6-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-3-6-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Chilaquiles": [
+        {
+          "id": "template-3-7-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-3-7-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Enchiladas suizas": [
+        {
+          "id": "template-3-8-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-3-8-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ],
+      "Waffles": [
+        {
+          "id": "template-3-9-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-3-9-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ]
+    },
+    "Postres": {},
+    "Paquetes": {
+      "Desayunos del día": [
+        {
+          "id": "template-5-1-1",
+          "nombre": "Producto 1",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        },
+        {
+          "id": "template-5-1-2",
+          "nombre": "Producto 2",
+          "precio": null,
+          "descripcion": "",
+          "opciones": [],
+          "placeholder": true
+        }
+      ]
+    }
+  },
+  "preparationAreas": {
+    "Entradas": "cocina",
+    "Bebidas": "barra",
+    "Alimentos": "cocina",
+    "Postres": "cocina",
+    "Paquetes": "coordinacion"
+  }
+}

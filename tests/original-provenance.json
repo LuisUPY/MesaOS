@@ -1,0 +1,34 @@
+[
+  {
+    "file": "tips.test.cjs",
+    "sha256": "63fe0277e0ac2858882585540ea5cd594a952df4f27a57484deef64ab540d322"
+  },
+  {
+    "file": "cash-browser.test.cjs",
+    "sha256": "8b13df8ed580e87ff350145538ade468493285fb014bd7f7bfbb4070bca2f2b4"
+  },
+  {
+    "file": "browser.test.cjs",
+    "sha256": "9810510ab83b4cc76a4fb509b3981868cc70d9a2f8f777a93abfbfc0c98a30db"
+  },
+  {
+    "file": "sales.test.cjs",
+    "sha256": "47056f43b8a00c151bf20df9f9e19d95c6eef8765a8f8c69d7951fabd4d8696b"
+  },
+  {
+    "file": "removal.test.cjs",
+    "sha256": "4cbae698753f4884669013e5f9c51e1f7d2a998182906f332587e60258459070"
+  },
+  {
+    "file": "printing.test.cjs",
+    "sha256": "0eb368a35169e23e32734fd33dca281712b4b687717d453f62be135de47dc481"
+  },
+  {
+    "file": "menu.test.cjs",
+    "sha256": "f3260d7b5e4bfed6266fdf40082ca451c9b55f4217898d15329aab7bcb5ad128"
+  },
+  {
+    "file": "cash.test.cjs",
+    "sha256": "9e745affbc12904ef5effe197511ce14f9f7cfd97cf8d3f5b4dc6ee4e7e2dc57"
+  }
+]
