@@ -79,7 +79,7 @@ async function main() {
     await page.locator('#product-search').fill('no-existe-xyz');
     assert.equal(await page.locator('#catalog-empty').isVisible(), true);
     await page.locator('#product-search').fill('dirty chai');
-    assert.equal(await page.locator('[data-producto="dirty-chai"] button').isDisabled(), false);
+    assert.equal(await page.locator('[data-producto="dirty-chai"] .add-button').isDisabled(), false);
     await page.locator('#product-search').fill('');
     assert.equal(await page.locator('.product-card').count(), 0);
 

@@ -87,13 +87,39 @@ async function main() {
       } else {
         assert.equal(await page.evaluate(() => MesaInstallation.demo), true);
         assert.equal(await page.evaluate(() => AmorPOS.catalogo.length), 46);
+        assert.equal(await page.evaluate(() => AmorPOS.catalogo.every(p => p.imagen?.endsWith('.png') || p.imagen?.includes('.png?v='))), true);
       }
       const menu = await page.evaluate(() => Object.entries(menuDB).map(([name, subs]) => ({ name, subs: Object.entries(subs).map(([name, products]) => ({ name, ids: products.map(p => p.id) })) })));
-      for (const width of [1440, 820, 390, 320]) {
+      for (const width of [1440, 820, 647, 390, 320]) {
         await page.setViewportSize({ width, height: 1000 });
+        if (prefix !== '/cliente/') {
+          // Las órdenes guardadas resuelven la imagen por producto, sin migrar datos.
+          const queue = page.locator('.queue-ticket').first();
+          const orderId = await queue.getAttribute('data-pedido');
+          const expected = await page.evaluate(id => AmorStorage.cargarExpediente().pedidos.find(p => p.id === id).partidas.map(p => ({
+            src: AmorPOS.porId.get(p.productoId).imagen, nombre: p.nombre
+          })), orderId);
+          await queue.locator('img').evaluateAll(images => Promise.all(images.map(image => image.decode())));
+          assert.deepEqual(await queue.locator('img').evaluateAll(images => images.map(image => image.getAttribute('src'))), expected.map(p => p.src));
+          await queue.click();
+          const ticketImages = page.locator('#ticket-lines img');
+          await ticketImages.evaluateAll(images => Promise.all(images.map(image => image.decode())));
+          assert.deepEqual(await ticketImages.evaluateAll(images => images.map(image => ({ src: image.getAttribute('src'), nombre: image.alt.replace('Imagen representativa de ', '') }))), expected);
+          assert.equal(await ticketImages.evaluateAll(images => images.every(image => image.getBoundingClientRect().width >= 64 && image.getBoundingClientRect().height >= 64)), true);
+          assert.equal(await page.locator('#ticket-dialog').evaluate(dialog => dialog.scrollWidth <= dialog.clientWidth + 1), true);
+          if (prefix === '/') await page.screenshot({ path: path.join(output, `ticket-${width}.png`) });
+          await page.locator('#ticket-dialog [data-close]').click();
+        }
         for (const macro of menu) {
           await page.getByRole('tab', { name: macro.name, exact: true }).click();
           assert.equal(await page.locator('.product-card').count(), macro.subs.flatMap(s => s.ids).length);
+          if (prefix !== '/cliente/') {
+            assert.equal(await page.locator('.product-image').count(), macro.subs.flatMap(s => s.ids).length);
+            await page.locator('.product-image').evaluateAll(images => Promise.all(images.map(image => {
+              image.loading = 'eager';
+              return image.decode();
+            })));
+          }
           for (const sub of macro.subs) {
             await page.locator('#subcategory-chips').getByRole('button', { name: sub.name, exact: true }).click();
             assert.deepEqual(await page.locator('.product-card').evaluateAll(cards => cards.map(c => c.dataset.producto)), sub.ids);
@@ -101,6 +127,23 @@ async function main() {
           }
         }
         await page.getByRole('tab', { name: 'Alimentos', exact: true }).click();
+        // La descripción inicia oculta y se puede desplegar sin agregar al pedido.
+        const firstCard = page.locator('.product-card').first();
+        const detailsToggle = firstCard.locator('.product-details-toggle');
+        const totalBeforeDetails = await page.locator('#order-total').textContent();
+        assert.equal(await firstCard.locator('.product-description').isVisible(), false);
+        await detailsToggle.click();
+        assert.equal(await detailsToggle.getAttribute('aria-expanded'), 'true');
+        assert.equal(await firstCard.locator('.product-description').isVisible(), true);
+        assert.equal(await page.locator('#modifier-dialog').isVisible(), false);
+        assert.equal(await page.locator('#order-total').textContent(), totalBeforeDetails);
+        await detailsToggle.press('Enter');
+        assert.equal(await firstCard.locator('.product-description').isVisible(), false);
+        assert.equal(await detailsToggle.getAttribute('aria-expanded'), 'false');
+        await page.locator('.product-image').evaluateAll(images => Promise.all(images.map(image => {
+          image.loading = 'eager';
+          return image.decode();
+        })));
         const layout = await page.evaluate(() => ({
           overflow: document.documentElement.scrollWidth > innerWidth + 1,
           brokenImages: [...document.images].filter(i => !i.complete || i.naturalWidth === 0).map(i => i.src),
@@ -162,7 +205,7 @@ async function main() {
       const urls = await page.evaluate(() => performance.getEntriesByType('resource').map(r => r.name));
       assert.ok(urls.every(url => url.startsWith(origin + prefix)), urls.join('\n'));
       await context.close();
-      console.log(`✓ ${prefix}: catálogo, pedidos, modo ligero persistente y renderizado a 1440/820/390/320 px.`);
+      console.log(`✓ ${prefix}: catálogo, pedidos, modo ligero persistente y renderizado a 1440/820/647/390/320 px.`);
     }
     const reducedContext = await browser.newContext({ reducedMotion: 'reduce' });
     const reducedPage = await reducedContext.newPage();

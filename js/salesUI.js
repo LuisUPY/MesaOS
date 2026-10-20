@@ -17,10 +17,20 @@ globalThis.AmorSalesUI = (() => {
     return result;
   }
   function imagen(partida) {
+    const producto = AmorPOS.porId.get(partida.productoId);
+    const fallback = AmorMedia.imagenesCategoria[partida.macroCategoria] || AmorMedia.imagenExtra;
     const img = node('img', 'category-thumbnail');
-    img.src = AmorMedia.imagenesCategoria[partida.macroCategoria] || AmorMedia.imagenExtra;
-    img.alt = `Imagen representativa: ${partida.macroCategoria || 'extra personalizado'}`;
-    img.width = 44; img.height = 44;
+    img.src = producto?.imagen || fallback;
+    img.alt = `Imagen representativa de ${partida.nombre}`;
+    img.width = 80; img.height = 80;
+    img.decoding = 'async';
+    if (producto?.imagen) {
+      img.classList.add('product-thumbnail');
+      img.addEventListener('error', () => {
+        img.src = fallback;
+        img.classList.remove('product-thumbnail');
+      }, { once: true });
+    }
     return img;
   }
   function estados(partida) {

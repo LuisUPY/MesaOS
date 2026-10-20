@@ -36,11 +36,102 @@
     'Waffles': ['Waffle clásico', 'Waffle con frutas'],
     'Desayunos del día': ['Desayuno completo', 'Desayuno ligero']
   };
+  const images = {
+    "Para compartir": [
+      "assets/img/demo/papas.png",
+      "assets/img/demo/nachos.png"
+    ],
+    "Aguas naturales": [
+      "assets/img/demo/agua-limon.png",
+      "assets/img/demo/agua-jamaica.png"
+    ],
+    "Bebidas rellenables": [
+      "assets/img/demo/cafe-olla.png",
+      "assets/img/demo/te-helado.png"
+    ],
+    "Jugos nutritivos": [
+      "assets/img/demo/jugo-verde.png",
+      "assets/img/demo/jugo-naranja.png"
+    ],
+    "Cafés": [
+      "assets/img/demo/americano.png",
+      "assets/img/demo/cappuccino.png"
+    ],
+    "Sin café": [
+      "assets/img/demo/chocolate-caliente.png",
+      "assets/img/demo/matcha.png"
+    ],
+    "Lattes saborizados": [
+      "assets/img/demo/latte-vainilla.png",
+      "assets/img/demo/latte-caramelo.png"
+    ],
+    "Lattes Amor": [
+      "assets/img/demo/latte-casa.png",
+      "assets/img/demo/latte-temporada.png"
+    ],
+    "Sodas italianas": [
+      "assets/img/demo/soda-fresa.png",
+      "assets/img/demo/soda-maracuya.png"
+    ],
+    "Licuados": [
+      "assets/img/demo/licuado-platano.png",
+      "assets/img/demo/licuado-fresa.png"
+    ],
+    "Frappés": [
+      "assets/img/demo/frappe-cafe.png",
+      "assets/img/demo/frappe-chocolate.png"
+    ],
+    "Malteadas": [
+      "assets/img/demo/licuado-platano.png",
+      "assets/img/demo/frappe-chocolate.png"
+    ],
+    "Pastas": [
+      "assets/img/demo/pasta-alfredo.png",
+      "assets/img/demo/pasta-pesto.png"
+    ],
+    "Hot cakes": [
+      "assets/img/demo/hotcakes.png",
+      "assets/img/demo/hotcakes-frutos.png"
+    ],
+    "Toast": [
+      "assets/img/demo/toast-aguacate.png",
+      "assets/img/demo/toast-casa.png"
+    ],
+    "Sándwiches": [
+      "assets/img/demo/sandwich-pollo.png",
+      "assets/img/demo/sandwich-vegetariano.png"
+    ],
+    "Croissants": [
+      "assets/img/demo/croissant-jamon.png",
+      "assets/img/demo/croissant.png"
+    ],
+    "Huevos y omelettes": [
+      "assets/img/demo/omelette.png",
+      "assets/img/demo/huevos.png"
+    ],
+    "Chilaquiles": [
+      "assets/img/demo/chilaquiles.png",
+      "assets/img/demo/chilaquiles.png"
+    ],
+    "Enchiladas suizas": [
+      "assets/img/demo/enchiladas.png",
+      "assets/img/demo/enchiladas.png"
+    ],
+    "Waffles": [
+      "assets/img/demo/waffle.png",
+      "assets/img/demo/waffle-frutas.png"
+    ],
+    "Desayunos del día": [
+      "assets/img/demo/desayuno-completo.png",
+      "assets/img/demo/desayuno-ligero.png"
+    ]
+  };
   for (const [macro, subs] of Object.entries(config.menu)) {
     for (const [sub, products] of Object.entries(subs)) {
       products.forEach((p, i) => {
         p.nombre = names[sub]?.[i] || `${sub} ${i + 1}`;
         p.precio = (macro === 'Bebidas' ? 45 : macro === 'Paquetes' ? 155 : 95) + i * 20;
+        p.imagen = images[sub]?.[i];
         p.descripcion = 'Producto de demostración. Personalízalo y agrégalo a un pedido.';
         delete p.placeholder;
         p.opciones = [{ id: 'extras', nombre: 'Extras', tipo: 'multiple', requerido: false,
@@ -51,8 +142,8 @@
     }
   }
   config.menu.Postres = { 'De la casa': [
-    { id: 'demo-brownie', nombre: 'Brownie de chocolate', precio: 65, descripcion: 'Brownie de la casa.', opciones: [] },
-    { id: 'demo-cheesecake', nombre: 'Cheesecake de frutos rojos', precio: 85, descripcion: 'Rebanada individual.', opciones: [] }
+    { id: 'demo-brownie', nombre: 'Brownie de chocolate', imagen: 'assets/img/demo/brownie.png', precio: 65, descripcion: 'Brownie de la casa.', opciones: [] },
+    { id: 'demo-cheesecake', nombre: 'Cheesecake de frutos rojos', imagen: 'assets/img/demo/cheesecake.png', precio: 85, descripcion: 'Rebanada individual.', opciones: [] }
   ] };
   globalThis.MesaInstallation = config;
   globalThis.menuDB = config.menu;

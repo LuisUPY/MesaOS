@@ -66,7 +66,7 @@ function copyRuntime(root, out) {
   for (const name of fs.readdirSync(path.join(root, 'js'))) {
     if (name.endsWith('.js') && name !== 'menuData.js') fs.copyFileSync(path.join(root, 'js', name), path.join(out, 'js', name));
   }
-  for (const name of ['assets/img/categorias', 'assets/platform']) {
+  for (const name of ['assets/img/categorias', 'assets/img/demo', 'assets/platform']) {
     fs.cpSync(path.join(root, name), path.join(out, name), { recursive: true, filter });
   }
 }

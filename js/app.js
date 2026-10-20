@@ -209,15 +209,50 @@
       const pending = !Number.isFinite(producto.precio);
       const card = element('article', `product-card${pending ? ' price-pending' : ''}${placeholder ? ' template-product' : ''}`);
       card.dataset.producto = producto.id;
+      if (producto.imagen) {
+        const preview = element('div', 'product-preview');
+        const image = element('img', 'product-image');
+        image.src = producto.imagen;
+        image.alt = `Imagen representativa de ${producto.nombre}`;
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        image.width = 320;
+        image.height = 200;
+        image.addEventListener('error', () => { preview.hidden = true; }, { once: true });
+        preview.append(image);
+        card.append(preview);
+      }
       const top = element('div', 'card-top');
       const symbol = element('span', 'product-symbol');
       symbol.append(icon(producto.macroCategoria));
       top.append(symbol, element('span', 'category-label', query ? `${producto.macroCategoria} · ${producto.subCategoria}` : producto.subCategoria));
-      card.append(top, element('h3', '', producto.nombre), element('p', 'product-description', producto.descripcion));
-      if (producto.opciones.length) {
-        const badge = element('span', 'options-badge');
-        badge.append(icon('options'), document.createTextNode('Opciones disponibles'));
-        card.append(badge);
+      card.append(top, element('h3', '', producto.nombre));
+      if (producto.descripcion || producto.opciones.length) {
+        const details = element('div', 'product-details');
+        details.id = `product-details-${producto.id}`;
+        details.hidden = true;
+        const marker = element('span', 'details-marker', '+');
+        marker.setAttribute('aria-hidden', 'true');
+        const label = element('span', '', 'Detalles');
+        const toggle = button('', 'product-details-toggle', () => {
+          const expanded = toggle.getAttribute('aria-expanded') !== 'true';
+          toggle.setAttribute('aria-expanded', String(expanded));
+          toggle.setAttribute('aria-label', `${expanded ? 'Ocultar' : 'Mostrar'} detalles de ${producto.nombre}`);
+          marker.textContent = expanded ? '−' : '+';
+          label.textContent = expanded ? 'Ocultar detalles' : 'Detalles';
+          details.hidden = !expanded;
+        });
+        toggle.append(marker, label);
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-controls', details.id);
+        toggle.setAttribute('aria-label', `Mostrar detalles de ${producto.nombre}`);
+        if (producto.descripcion) details.append(element('p', 'product-description', producto.descripcion));
+        if (producto.opciones.length) {
+          const badge = element('span', 'options-badge');
+          badge.append(icon('options'), document.createTextNode('Opciones disponibles'));
+          details.append(badge);
+        }
+        card.append(toggle, details);
       }
       const bottom = element('div', 'card-bottom');
       const price = element('span', 'product-price', placeholder ? 'Sin precio' : pending ? 'Precio pendiente' : dinero(producto.precio));
