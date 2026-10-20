@@ -7,7 +7,7 @@ const http = require('node:http');
 const vm = require('node:vm');
 const { chromium } = require('playwright');
 const root = path.resolve(__dirname, '../..');
-const output = path.join(root, 'test-results', 'vendor-compat');
+const output = process.env.MESAOS_TEST_OUTPUT || path.join(root, 'test-results', 'vendor-compat');
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml' };
 
 async function main() {
@@ -32,7 +32,7 @@ async function main() {
   await new Promise((resolve, reject) => { server.on('error', reject); server.listen(0, '127.0.0.1', resolve); });
   let browser;
   try {
-    browser = await chromium.launch({ headless: true, channel:'chrome' });
+    browser = await chromium.launch({ headless: true, channel: process.env.PLAYWRIGHT_CHANNEL === 'chromium' ? undefined : 'chrome' });
     const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
     await context.addInitScript(({ key, state, config }) => { window.MesaInstallation=config;
       if (!localStorage.getItem(key)) localStorage.setItem(key, JSON.stringify(state));
@@ -325,7 +325,7 @@ async function main() {
     const labeled = page.locator('[data-pedido="pedido-3"]');
     assert.equal(await labeled.locator('.queue-label').textContent(), 'Mesa 4 · Ana');
     assert.equal(await preset('Mesa 4').isDisabled(), true);
-    assert.equal(await preset('Mesa 4').evaluate(n => getComputedStyle(n).backgroundColor), 'rgb(229, 231, 235)');
+    assert.equal(await preset('Mesa 4').evaluate(n => getComputedStyle(n).backgroundColor), 'rgb(231, 231, 231)');
     assert.ok(await labeled.evaluate(n => parseFloat(getComputedStyle(n.querySelector('.queue-label')).fontSize) > parseFloat(getComputedStyle(n.querySelector('.queue-number')).fontSize)));
     await labeled.click();
     await page.locator('#pay-all').click();

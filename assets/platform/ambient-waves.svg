@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" fill="none">
+  <defs>
+    <linearGradient id="ribbon" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#999999" stop-opacity=".075"/>
+      <stop offset=".23" stop-color="#999999" stop-opacity=".075"/>
+      <stop offset=".46" stop-color="#999999" stop-opacity=".075"/>
+      <stop offset=".67" stop-color="#999999" stop-opacity=".075"/>
+      <stop offset=".85" stop-color="#999999" stop-opacity=".075"/>
+      <stop offset="1" stop-color="#999999" stop-opacity=".075"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#999999" stop-opacity=".075"/>
+      <stop offset=".4" stop-color="#999999" stop-opacity=".075"/>
+      <stop offset=".7" stop-color="#999999" stop-opacity=".075"/>
+      <stop offset="1" stop-color="#999999" stop-opacity=".075"/>
+    </linearGradient>
+  </defs>
+  <path d="M0 170C200 170 200 45 400 45S600 295 800 295S1000 170 1200 170V242C1000 242 1000 385 800 385S600 120 400 120S200 242 0 242Z" fill="url(#ribbon)"/>
+  <path d="M0 170C200 170 200 45 400 45S600 295 800 295S1000 170 1200 170" stroke="url(#edge)"/>
+  <path d="M0 205C200 205 200 80 400 80S600 335 800 335S1000 205 1200 205" stroke="url(#edge)" stroke-opacity=".45"/>
+  <path d="M0 430C200 430 200 560 400 560S600 300 800 300S1000 430 1200 430V505C1000 505 1000 380 800 380S600 640 400 640S200 505 0 505Z" fill="url(#ribbon)"/>
+  <path d="M0 430C200 430 200 560 400 560S600 300 800 300S1000 430 1200 430" stroke="url(#edge)"/>
+  <path d="M0 468C200 468 200 600 400 600S600 340 800 340S1000 468 1200 468" stroke="url(#edge)" stroke-opacity=".45"/>
+</svg>

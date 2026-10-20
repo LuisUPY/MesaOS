@@ -1,15 +1,15 @@
 @charset "UTF-8";
 :root {
-  --forest:#183d32;
-  --forest-soft:#eaf0e9;
-  --ink:#23392f;
-  --muted:#69715f;
-  --cream:#f7f5ef;
-  --paper:#fffefa;
-  --line:#e7e8de;
-  --rose:#e69aae;
-  --rose-soft:#f9e8ec;
-  --error:#a9414a;
+  --forest:#343434;
+  --forest-soft:#eeeeee;
+  --ink:#343434;
+  --muted:#6e6e6e;
+  --cream:#f5f5f5;
+  --paper:#fefefe;
+  --line:#e7e7e7;
+  --rose:#acacac;
+  --rose-soft:#ececec;
+  --error:#585858;
   --radius:16px;
   font-family:"Avenir Next",Avenir,"Segoe UI",sans-serif;
   color:var(--ink);
@@ -47,7 +47,7 @@ button {
 }
 
 button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible {
-  outline:3px solid #cc7893;
+  outline:3px solid #8c8c8c;
   outline-offset:3px
 }
 
@@ -90,7 +90,7 @@ svg {
   font-size:10px;
   font-weight:700;
   letter-spacing:1.8px;
-  color:#70755f
+  color:#727272
 }
 
 .status-dot {
@@ -98,7 +98,7 @@ svg {
   height:6px;
   flex:none;
   border-radius:50%;
-  background:#619572
+  background:#878787
 }
 
 .topbar {
@@ -208,7 +208,7 @@ svg {
   content:"";
   position:absolute;
   border-radius:50%;
-  background:#efeee2;
+  background:#ededed;
   width:115px;
   height:100px;
   top:9px;
@@ -231,7 +231,7 @@ svg {
   font-size:10px;
   font-style:italic;
   font-family:Georgia,serif;
-  color:#6e765f;
+  color:#737373;
   transform:rotate(-7deg)
 }
 
@@ -259,7 +259,7 @@ svg {
   font-size:12px;
   font-weight:600;
   padding:9px 13px;
-  color:#6f786b
+  color:#757575
 }
 
 .macro-tab svg {
@@ -270,7 +270,7 @@ svg {
 .macro-tab[aria-selected="true"] {
   background:var(--forest);
   color:var(--paper);
-  box-shadow:0 3px 7px #183d3218
+  box-shadow:0 3px 7px #34343418
 }
 
 .macro-tab:hover:not([aria-selected="true"]) {
@@ -288,7 +288,7 @@ svg {
   gap:8px;
   padding:2px 0 10px;
   scrollbar-width:thin;
-  scrollbar-color:#d7dbce transparent
+  scrollbar-color:#d9d9d9 transparent
 }
 
 .chip {
@@ -304,14 +304,14 @@ svg {
 }
 
 .chip[aria-pressed="true"] {
-  background:#e7ecdf;
-  border-color:#b6c1a7;
+  background:#eaeaea;
+  border-color:#bdbdbd;
   color:var(--forest);
   font-weight:700
 }
 
 .chip:hover {
-  border-color:#adb99d
+  border-color:#b4b4b4
 }
 
 .catalog-toolbar {
@@ -342,7 +342,7 @@ svg {
   border:1px solid var(--line);
   border-radius:8px;
   background:var(--paper);
-  color:#85917e
+  color:#8d8d8d
 }
 
 .search-field svg {
@@ -362,11 +362,11 @@ svg {
 }
 
 .search-field:focus-within {
-  border-color:#94a683
+  border-color:#a0a0a0
 }
 
 .search-field input::placeholder {
-  color:#737d66
+  color:#797979
 }
 
 .product-grid {
@@ -390,8 +390,8 @@ svg {
 }
 
 .product-card:hover:not(.price-pending) {
-  border-color:#becab0;
-  box-shadow:0 5px 18px #183d3209;
+  border-color:#c6c6c6;
+  box-shadow:0 5px 18px #34343409;
   transform:translateY(-2px)
 }
 
@@ -404,8 +404,8 @@ svg {
 }
 
 .product-symbol {
-  background:#f0f2e8;
-  color:#77876a;
+  background:#f1f1f1;
+  color:#828282;
   border-radius:9px;
   padding:9px;
   width:37px;
@@ -421,7 +421,7 @@ svg {
 }
 
 .category-label {
-  color:#70755f;
+  color:#727272;
   font-size:8px;
   letter-spacing:1px;
   text-transform:uppercase;
@@ -441,7 +441,7 @@ svg {
 .product-description {
   font-size:10px;
   line-height:1.65;
-  color:#70776a;
+  color:#757575;
   display:-webkit-box;
   -webkit-line-clamp:2;
   -webkit-box-orient:vertical;
@@ -451,7 +451,7 @@ svg {
 
 .options-badge {
   font-size:9px;
-  color:#955468;
+  color:#636363;
   display:flex;
   align-items:center;
   gap:5px;
@@ -484,7 +484,7 @@ svg {
   margin-left:2px;
   font-weight:400;
   letter-spacing:0;
-  color:#96998d
+  color:#979797
 }
 
 .add-button {
@@ -494,8 +494,8 @@ svg {
   display:flex;
   align-items:center;
   justify-content:center;
-  border:1px solid #d9e2cd;
-  background:#f0f3e8;
+  border:1px solid #dfdfdf;
+  background:#f2f2f2;
   border-radius:50%;
   font-size:23px;
   font-weight:400;
@@ -517,7 +517,7 @@ svg {
 }
 
 .price-pending {
-  background:#faf5f2
+  background:#f6f6f6
 }
 
 .price-pending .product-price {
@@ -530,13 +530,13 @@ svg {
   display:flex;
   gap:8px;
   align-items:center;
-  color:#6e765f;
+  color:#737373;
   font-size:10px;
   line-height:1.6
 }
 
 .catalog-tip span {
-  color:#ad8490;
+  color:#8e8e8e;
   font-size:17px
 }
 
@@ -549,7 +549,7 @@ svg {
 
 .catalog-empty>span {
   font-size:32px;
-  color:#91a183
+  color:#9b9b9b
 }
 
 .catalog-empty h3 {
@@ -569,7 +569,7 @@ svg {
   background:var(--paper);
   border-radius:var(--radius);
   padding:25px 23px 18px;
-  box-shadow:0 6px 25px #243b3105;
+  box-shadow:0 6px 25px #35353505;
   max-height:calc(100dvh - 148px);
   display:flex;
   flex-direction:column;
@@ -613,7 +613,7 @@ svg {
   width:100%;
   margin-top:9px;
   border:1px solid var(--line);
-  background:#fafaf5;
+  background:#fafafa;
   border-radius:7px;
   padding:11px 12px;
   font-size:11px;
@@ -621,7 +621,7 @@ svg {
 }
 
 .order-label input::placeholder {
-  color:#737d66
+  color:#797979
 }
 
 .order-items {
@@ -636,7 +636,7 @@ svg {
 .order-empty {
   padding:47px 18px 37px;
   text-align:center;
-  color:#6d775f
+  color:#737373
 }
 
 .empty-icon {
@@ -645,7 +645,7 @@ svg {
   border-radius:50%;
   display:grid;
   place-items:center;
-  background:#f4f4eb;
+  background:#f3f3f3;
   margin:0 auto 16px
 }
 
@@ -657,7 +657,7 @@ svg {
 .order-empty strong {
   font-size:12px;
   font-weight:500;
-  color:#757f69
+  color:#7b7b7b
 }
 
 .order-empty p {
@@ -694,7 +694,7 @@ svg {
 
 .line-options {
   font-size:10px;
-  color:#6d775f;
+  color:#737373;
   line-height:1.7;
   margin-top:5px;
   overflow-wrap:anywhere
@@ -703,7 +703,7 @@ svg {
 .line-note {
   font-size:10px;
   line-height:1.6;
-  color:#955468;
+  color:#636363;
   margin-top:4px;
   overflow-wrap:anywhere
 }
@@ -725,7 +725,7 @@ svg {
 
 .quantity-controls button {
   border:0;
-  background:#f8f9f2;
+  background:#f8f8f8;
   width:30px;
   min-height:30px;
   font-size:16px
@@ -743,21 +743,21 @@ svg {
 
 .line-unit {
   font-size:9px;
-  color:#6d775f
+  color:#737373
 }
 
 .remove-line {
   margin-left:auto;
   border:0;
   background:transparent;
-  color:#955468;
+  color:#636363;
   font-size:10px;
   padding:8px 0 8px 8px
 }
 
 .order-bottom {
   flex:none;
-  border-top:1px dashed #dce0d1;
+  border-top:1px dashed #dedede;
   padding-top:14px
 }
 
@@ -766,7 +766,7 @@ svg {
   border:0;
   background:transparent;
   font-size:10px;
-  color:#6d775f
+  color:#737373
 }
 
 .order-total {
@@ -790,7 +790,7 @@ svg {
 
 .total-note {
   font-size:9px;
-  color:#6d775f;
+  color:#737373;
   margin:5px 0 20px
 }
 
@@ -810,7 +810,7 @@ svg {
 }
 
 .primary-button:hover:not(:disabled) {
-  background:#295044
+  background:#474747
 }
 
 .primary-button>span {
@@ -828,7 +828,7 @@ svg {
   justify-content:center;
   gap:7px;
   font-size:8px;
-  color:#6d775f;
+  color:#737373;
   margin-top:14px;
   line-height:1.6
 }
@@ -836,7 +836,7 @@ svg {
 .local-note .status-dot {
   width:4px;
   height:4px;
-  background:#a8b696
+  background:#b1b1b1
 }
 
 .page-footer {
@@ -848,17 +848,17 @@ svg {
   padding:17px 40px;
   margin-top:15px;
   font-size:9px;
-  color:#6d775f
+  color:#737373
 }
 
 #restaurant-tagline {
   font-family:Georgia,serif;
   font-size:12px;
-  color:#7c866f
+  color:#828282
 }
 
 #restaurant-tagline span {
-  color:#cf98a6;
+  color:#a5a5a5;
   margin-left:7px
 }
 
@@ -871,11 +871,11 @@ svg {
   max-height:calc(100dvh - 32px);
   overflow-y:auto;
   background:var(--paper);
-  box-shadow:0 24px 90px #183d3230
+  box-shadow:0 24px 90px #34343430
 }
 
 .modal::backdrop {
-  background:#18392e65;
+  background:#31313165;
   backdrop-filter:blur(4px)
 }
 
@@ -907,7 +907,7 @@ svg {
 .modal-description {
   font-size:12px;
   line-height:1.8;
-  color:#879079;
+  color:#8c8c8c;
   margin-top:14px
 }
 
@@ -933,7 +933,7 @@ svg {
 
 .required-badge {
   background:var(--rose-soft);
-  color:#a46076;
+  color:#707070;
   border-radius:4px;
   font-size:8px;
   letter-spacing:.3px;
@@ -943,7 +943,7 @@ svg {
 
 .optional-badge {
   font-size:10px;
-  color:#6d775f;
+  color:#737373;
   font-weight:400
 }
 
@@ -960,8 +960,8 @@ svg {
 }
 
 .option-choice:has(input:checked) {
-  border-color:#98ae88;
-  background:#f0f5e9
+  border-color:#a7a7a7;
+  background:#f3f3f3
 }
 
 .option-choice input {
@@ -975,12 +975,12 @@ svg {
 .option-choice .extra-price {
   margin-left:auto;
   font-size:11px;
-  color:#7a8a70
+  color:#858585
 }
 
 .group-help {
   font-size:10px;
-  color:#7c6d60;
+  color:#6f6f6f;
   line-height:1.7;
   margin:4px 0 10px
 }
@@ -990,7 +990,7 @@ svg {
   width:100%;
   border:1px solid var(--line);
   border-radius:8px;
-  background:#fafbf5;
+  background:#fafafa;
   padding:12px;
   color:var(--ink);
   font-size:12px
@@ -1011,7 +1011,7 @@ svg {
   color:var(--error);
   margin-top:15px;
   padding:10px;
-  background:#faeded;
+  background:#f0f0f0;
   border-radius:6px
 }
 
@@ -1095,8 +1095,8 @@ svg {
   transform:translateX(-50%);
   padding:13px 20px;
   background:var(--forest);
-  color:#fffefa;
-  box-shadow:0 5px 25px #183d3240;
+  color:#fefefe;
+  box-shadow:0 5px 25px #34343440;
   border-radius:10px;
   font-size:12px;
   z-index:10;
@@ -1418,7 +1418,7 @@ svg {
     align-items:center;
     justify-content:space-between;
     gap:14px;
-    box-shadow:0 8px 30px #183d3233;
+    box-shadow:0 8px 30px #34343433;
     font-size:12px;
     min-height:50px
   }
@@ -1426,7 +1426,7 @@ svg {
     margin-left:auto
   }
   .mobile-count {
-    background:#416252;
+    background:#5a5a5a;
     display:inline-grid;
     place-items:center;
     min-width:22px;

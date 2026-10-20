@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" fill="none">
+<defs>
+  <linearGradient id="spectrum" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1600" y2="0" color-interpolation="sRGB">
+    <stop stop-color="#a9bfd5"/><stop offset=".125" stop-color="#b4bdd6"/>
+    <stop offset=".25" stop-color="#c5bad5"/><stop offset=".375" stop-color="#d5bed0"/>
+    <stop offset=".5" stop-color="#d6c5bc"/><stop offset=".625" stop-color="#cbd0bf"/>
+    <stop offset=".75" stop-color="#b7cfc9"/><stop offset=".875" stop-color="#aec8d1"/>
+    <stop offset="1" stop-color="#a9bfd5"/>
+  </linearGradient>
+</defs>
+<path d="M0 180 C200 180 200 80 400 80 S600 280 800 280 S1000 80 1200 80 S1400 180 1600 180 L1600 330 C1400 330 1400 230 1200 230 S1000 430 800 430 S600 230 400 230 S200 330 0 330Z" fill="url(#spectrum)" fill-opacity="0.100"/>
+<path d="M0 180 C200 180 200 80 400 80 S600 280 800 280 S1000 80 1200 80 S1400 180 1600 180" stroke="url(#spectrum)" stroke-opacity=".11" stroke-width=".8"/>
+<path d="M0 207 C200 207 200 117 400 117 S600 297 800 297 S1000 117 1200 117 S1400 207 1600 207 L1600 381 C1400 381 1400 291 1200 291 S1000 471 800 471 S600 291 400 291 S200 381 0 381Z" fill="url(#spectrum)" fill-opacity="0.087"/>
+<path d="M0 207 C200 207 200 117 400 117 S600 297 800 297 S1000 117 1200 117 S1400 207 1600 207" stroke="url(#spectrum)" stroke-opacity=".11" stroke-width=".8"/>
+<path d="M0 234 C200 234 200 154 400 154 S600 314 800 314 S1000 154 1200 154 S1400 234 1600 234 L1600 432 C1400 432 1400 352 1200 352 S1000 512 800 512 S600 352 400 352 S200 432 0 432Z" fill="url(#spectrum)" fill-opacity="0.074"/>
+<path d="M0 234 C200 234 200 154 400 154 S600 314 800 314 S1000 154 1200 154 S1400 234 1600 234" stroke="url(#spectrum)" stroke-opacity=".11" stroke-width=".8"/>
+<path d="M0 261 C200 261 200 191 400 191 S600 331 800 331 S1000 191 1200 191 S1400 261 1600 261 L1600 483 C1400 483 1400 413 1200 413 S1000 553 800 553 S600 413 400 413 S200 483 0 483Z" fill="url(#spectrum)" fill-opacity="0.061"/>
+<path d="M0 261 C200 261 200 191 400 191 S600 331 800 331 S1000 191 1200 191 S1400 261 1600 261" stroke="url(#spectrum)" stroke-opacity=".11" stroke-width=".8"/>
+<path d="M0 600C200 600 200 700 400 700S600 500 800 500S1000 700 1200 700S1400 600 1600 600L1600 750C1400 750 1400 850 1200 850S1000 650 800 650S600 850 400 850S200 750 0 750Z" fill="url(#spectrum)" fill-opacity="0.100"/>
+<path d="M0 600C200 600 200 700 400 700S600 500 800 500S1000 700 1200 700S1400 600 1600 600" stroke="url(#spectrum)" stroke-opacity=".11" stroke-width=".8"/>
+<path d="M0 627C200 627 200 717 400 717S600 537 800 537S1000 717 1200 717S1400 627 1600 627L1600 801C1400 801 1400 891 1200 891S1000 711 800 711S600 891 400 891S200 801 0 801Z" fill="url(#spectrum)" fill-opacity="0.087"/>
+<path d="M0 627C200 627 200 717 400 717S600 537 800 537S1000 717 1200 717S1400 627 1600 627" stroke="url(#spectrum)" stroke-opacity=".11" stroke-width=".8"/>
+<path d="M0 654C200 654 200 734 400 734S600 574 800 574S1000 734 1200 734S1400 654 1600 654L1600 852C1400 852 1400 932 1200 932S1000 772 800 772S600 932 400 932S200 852 0 852Z" fill="url(#spectrum)" fill-opacity="0.074"/>
+<path d="M0 654C200 654 200 734 400 734S600 574 800 574S1000 734 1200 734S1400 654 1600 654" stroke="url(#spectrum)" stroke-opacity=".11" stroke-width=".8"/>
+<path d="M0 681C200 681 200 751 400 751S600 611 800 611S1000 751 1200 751S1400 681 1600 681L1600 903C1400 903 1400 973 1200 973S1000 833 800 833S600 973 400 973S200 903 0 903Z" fill="url(#spectrum)" fill-opacity="0.061"/>
+<path d="M0 681C200 681 200 751 400 751S600 611 800 611S1000 751 1200 751S1400 681 1600 681" stroke="url(#spectrum)" stroke-opacity=".11" stroke-width=".8"/>
+</svg>

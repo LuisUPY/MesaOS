@@ -3,7 +3,7 @@ const config=validate(parse(fs.readFileSync('config/restaurant.json','utf8')),{a
 if(config.ready||config.restaurant.name||Object.values(config.menu).flatMap(subs=>Object.values(subs).flat()).some(p=>!p.placeholder||p.precio!==null))throw Error('La maestra sólo admite fichas de ejemplo sin precios.');
 if(fs.readFileSync('config/installation.js','utf8')!==script(config))throw Error('Regenera config/installation.js: node scripts/build.cjs --sync-template');
 for(const dir of ['js','scripts'])for(const f of fs.readdirSync(dir))if(/\.(js|cjs)$/.test(f))cp.execFileSync(process.execPath,['--check',path.join(dir,f)]);
-const html=fs.readFileSync('index.html','utf8');for(const m of html.matchAll(/(?:src|href)="([^"#]+)"/g))if(!fs.existsSync(m[1]))throw Error('Falta recurso: '+m[1]);
+const html=fs.readFileSync('index.html','utf8');for(const m of html.matchAll(/(?:src|href)="([^"#]+)"/g))if(!fs.existsSync(m[1].split(/[?#]/)[0]))throw Error('Falta recurso: '+m[1]);
 if(html.includes('js/menuData.js')||/admin-|import-config|input type="file"/.test(html))throw Error('La entrega no debe cargar el menú original ni un editor para el cliente.');
 for(const entry of JSON.parse(fs.readFileSync('tests/original-provenance.json'))){const sum=crypto.createHash('sha256').update(fs.readFileSync(path.join('tests',entry.file))).digest('hex');if(sum!==entry.sha256)throw Error('Suite original alterada: '+entry.file);}
 for(const name of ['ARCHITECTURE_AUDIT','CONFIGURATION','DEPLOYMENT','MIGRATION','ROADMAP','TESTING'])if(!fs.existsSync(`docs/${name}.md`))throw Error('Falta documentación '+name);

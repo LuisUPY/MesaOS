@@ -8,7 +8,7 @@ const { pathToFileURL } = require('node:url');
 const { chromium } = require('playwright');
 const vm = require('node:vm');
 const root = path.resolve(__dirname, '../..');
-const output = path.join(root, 'test-results', 'vendor-compat');
+const output = process.env.MESAOS_TEST_OUTPUT || path.join(root, 'test-results', 'vendor-compat');
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.pdf': 'application/pdf', '.json': 'application/json' };
 
 async function main() {
@@ -36,7 +36,7 @@ async function main() {
   await new Promise((resolve, reject) => { server.on('error', reject); server.listen(0, '127.0.0.1', resolve); });
   let browser;
   try {
-    browser = await chromium.launch({ headless: true, channel:'chrome' });
+    browser = await chromium.launch({ headless: true, channel: process.env.PLAYWRIGHT_CHANNEL === 'chromium' ? undefined : 'chrome' });
     const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
     await context.addInitScript(({ key, state, config }) => { window.MesaInstallation=config; if (!localStorage.getItem(key)) localStorage.setItem(key, JSON.stringify(state)); }, { key: core.AmorStorage.KEY, state: seeded, config: legacyFixture });
     await context.addInitScript(() => { window.print = () => setTimeout(() => window.dispatchEvent(new Event('afterprint')), 0); });
@@ -122,12 +122,21 @@ async function main() {
     await page.locator('#cash-open-dialog [data-close]').click();
     assert.equal(await page.locator('#order-total').textContent(), '$662.35');
     assert.equal(await page.locator('#order-label').inputValue(), 'Mesa 03');
+    await page.locator('#toggle-queue').click();
+    assert.equal(await page.locator('#toggle-queue').getAttribute('aria-expanded'), 'false');
     await page.locator('#review-order').click();
     assert.equal(await page.locator('#review-total').textContent(), '$662.35');
     await page.locator('#confirm-order').click();
     assert.equal(await page.locator('#order-count').textContent(), '0');
     assert.equal(await page.locator('#open-orders-count').textContent(), '1');
     const queue = page.locator('[data-pedido="pedido-3"]');
+    const orderGradient = await queue.evaluate(n => n.style.getPropertyValue('--order-gradient'));
+    assert.match(orderGradient, /linear-gradient/);
+    assert.ok(await page.locator('.order-transfer-item').count() > 0);
+    await page.waitForFunction(() => document.querySelectorAll('.order-transfer-item').length === 0);
+    assert.equal(await page.locator('#toggle-queue').getAttribute('aria-expanded'), 'false');
+    await page.locator('#toggle-queue').click();
+
     assert.equal(await queue.locator('.status-badge').textContent(), 'ABIERTO');
     await page.waitForFunction(() => [...document.querySelectorAll('[data-pedido="pedido-3"] img')].every(n => n.complete && n.naturalWidth > 0));
     const thumbnails = await queue.locator('img').evaluateAll(nodes => nodes.map(n => ({ src: n.getAttribute('src'), loaded: n.complete && n.naturalWidth > 0 })));
@@ -136,6 +145,7 @@ async function main() {
     await page.reload(); await page.waitForSelector('.product-card');
     await page.locator('#cash-open-dialog [data-close]').click();
     assert.equal(await page.locator('#open-orders-count').textContent(), '1');
+    assert.equal(await queue.evaluate(n => n.style.getPropertyValue('--order-gradient')), orderGradient);
     await page.locator('[data-pedido="pedido-3"]').click();
     await page.locator('#ticket-lines .ticket-line').first().getByRole('button', { name: 'Cobrar producto', exact: true }).click();
     await page.locator('#cash-opening-fund').fill('500');
@@ -196,8 +206,12 @@ async function main() {
     assert.equal(await page.locator('#review-dialog').isVisible(), true);
     assert.equal(await page.locator('#order-total').textContent(), '$15.20');
     assert.equal(await page.locator('#open-orders-count').textContent(), '0');
+    assert.equal(await page.locator('.order-transfer-item').count(), 0);
     await page.evaluate(() => { Storage.prototype.setItem = window.realSetItem; });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.locator('#confirm-order').click();
+    assert.equal(await page.locator('.order-transfer-item').count(), 0);
+    assert.notEqual(await page.locator('[data-pedido="pedido-4"]').evaluate(n => n.style.getPropertyValue('--order-gradient')), orderGradient);
     assert.equal(await page.locator('[data-pedido="pedido-4"]').count(), 1);
     assert.equal(await page.locator('input[type="file"]').count(), 0);
     assert.equal(downloads, 0);

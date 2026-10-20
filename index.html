@@ -6,27 +6,31 @@
   <meta name="theme-color" content="#183d32">
   <meta name="description" content="Plantilla maestra vacía MesaOS.">
   <title>MesaOS · Plantilla maestra</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/pos-features.css">
-  <link rel="stylesheet" href="css/cash-print.css">
-  <link rel="stylesheet" href="css/installation.css">
+  <link rel="stylesheet" href="css/styles.css?v=20261020-mono1">
+  <link rel="stylesheet" href="css/pos-features.css?v=20261020-mono1">
+  <link rel="stylesheet" href="css/cash-print.css?v=20261020-mono1">
+  <link rel="stylesheet" href="css/installation.css?v=20261020-orders1">
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" href="assets/platform/mesaos-logo-transparent.png">
-  <script src="config/installation.js" defer></script>
-  <script src="js/installation.js" defer></script>
+  <link rel="icon" type="image/png" href="assets/platform/mesaos-logo-mini.png">
+  <script src="config/installation.js?v=20261020-mono1" defer></script>
+  <script src="js/demo.js" defer></script>
+  <script src="js/notice-particles.js?v=20261020-mono1" defer></script>
+  <script src="js/installation.js?v=20261020-mono1" defer></script>
   <script src="js/orderCore.js" defer></script>
   <script src="js/orders.js" defer></script>
   <script src="js/history.js" defer></script>
   <script src="js/cash.js" defer></script>
   <script src="js/storage.js" defer></script>
+  <script src="js/demo-session.js" defer></script>
   <script src="js/media.js" defer></script>
-  <script src="js/salesUI.js" defer></script>
+  <script src="js/order-effects.js" defer></script>
+  <script src="js/salesUI.js?v=20261020-orders1" defer></script>
   <script src="js/cashUI.js" defer></script>
   <script src="js/printing.js" defer></script>
-  <script src="js/app.js" defer></script>
+  <script src="js/app.js?v=20261020-orders1" defer></script>
 </head>
 <body>
-  <p id="template-notice" hidden>Plantilla maestra. Categorías y productos de ejemplo; el proveedor completa el menú, la identidad y los precios antes de la entrega.</p>
+  <section id="template-notice" hidden aria-label="Demostración interactiva"></section>
   <header class="topbar">
     <a class="brand" href="./" aria-label="MesaOS, inicio"><img id="restaurant-logo" src="assets/platform/mesaos-logo-transparent.png" alt="MesaOS" width="180" height="72"></a>
     <div class="header-cash">
@@ -55,9 +59,10 @@
   </header>
 
   <main class="workspace">
+    <div class="workspace-waves" aria-hidden="true"></div>
     <section class="catalog" aria-labelledby="catalog-title">
       <div class="catalog-heading">
-        <div><p class="eyebrow" data-restaurant-name>MesaOS</p><h1 id="catalog-title">Plantilla maestra</h1><p class="heading-note">Elige, personaliza y prepara tu pedido.</p></div>
+        <h1 id="catalog-title">Menú</h1>
       </div>
       <div id="macro-tabs" class="macro-tabs" role="tablist" aria-label="Categorías del menú"></div>
       <section id="catalog-panel" role="tabpanel" aria-labelledby="tab-alimentos">

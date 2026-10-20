@@ -455,7 +455,16 @@
     $('review-total').textContent = dinero(totalPedido(state.partidas) / 100);
     $('review-dialog').showModal();
   });
+  function printConfirmedOrder(pedido, sources) {
+    // Storage has already committed. A visual effect can never undo or block that success.
+    let transfer;
+    try { transfer = globalThis.MesaOrderEffects?.transfer(pedido, sources); }
+    catch { transfer = null; }
+    return Promise.resolve(transfer).catch(() => {}).then(() => AmorPrinting.imprimirComandas(pedido));
+  }
   $('confirm-order').addEventListener('click', () => {
+    let transferSources = [];
+    try { transferSources = globalThis.MesaOrderEffects?.capture() || []; } catch {}
     try {
       const next = currentState();
       if (state.pedidoDestinoId) {
@@ -469,7 +478,7 @@
         if (commit(next)) {
           $('review-dialog').close(); salesUI.abrirPedido(pedido.id);
           notify(`Productos añadidos a ${pedido.etiqueta || `pedido N° ${pedido.numero}`}`);
-          AmorPrinting.imprimirComandas({ ...pedido, partidas: nuevas }).catch(error => notify(`Productos guardados. No se abrió la impresión: ${error.message}`));
+          printConfirmedOrder({ ...pedido, partidas: nuevas }, transferSources).catch(error => notify(`Productos guardados. No se abrió la impresión: ${error.message}`));
         }
         return;
       }
@@ -479,7 +488,7 @@
       next.borrador = { etiqueta: '', partidas: [] };
       if (commit(next)) {
         $('review-dialog').close(); notify(`Pedido N° ${pedido.numero} guardado`);
-        AmorPrinting.imprimirComandas(pedido).catch(error => notify(`Pedido guardado. No se abrió la impresión: ${error.message}. Puedes reimprimir sus comandas.`));
+        printConfirmedOrder(pedido, transferSources).catch(error => notify(`Pedido guardado. No se abrió la impresión: ${error.message}. Puedes reimprimir sus comandas.`));
       }
     } catch (error) { notify(error.message); }
   });

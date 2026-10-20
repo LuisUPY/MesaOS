@@ -160,6 +160,7 @@ globalThis.AmorSalesUI = (() => {
       $('open-orders-list').replaceChildren(...abiertos.map(pedido => {
         const card = button('', 'queue-ticket', () => abrirPedido(pedido.id));
         card.dataset.pedido = pedido.id;
+        globalThis.MesaOrderEffects?.decorate(card, pedido);
         card.setAttribute('aria-label', `Abrir pedido número ${pedido.numero}${pedido.etiqueta ? `, ${pedido.etiqueta}` : ''}`);
         const preview = node('span', 'queue-thumbnails');
         const visible = pedido.partidas.slice(0, pedido.partidas.length > 4 ? 3 : 4);

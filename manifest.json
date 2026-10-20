@@ -1,11 +1,12 @@
 {
   "name": "MesaOS",
   "short_name": "MesaOS",
-  "description": "Plantilla maestra POS",
+  "description": "Demostración interactiva del punto de venta MesaOS",
   "display": "standalone",
   "start_url": "./",
   "scope": "./",
   "background_color": "#fffefa",
-  "theme_color": "#182A24",
-  "lang": "es-MX"
+  "theme_color": "#181818",
+  "lang": "es-MX",
+  "icons": [{ "src": "assets/platform/mesaos-logo-mini.png", "type": "image/png", "purpose": "any" }]
 }
