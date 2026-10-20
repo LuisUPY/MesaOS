@@ -2,6 +2,8 @@
 
 ## Preparación para GitHub Pages (20 de octubre de 2026)
 
+El modo ligero se comprueba desde **Opciones → Desactivar animaciones**: se detienen animaciones CSS y dibujos del canvas, se omiten los vuelos de productos y la preferencia persiste al recargar. Se crea un pedido con los efectos desactivados y se vuelven a activar desde el mismo botón. Una sesión independiente verifica el movimiento reducido del sistema y que la elección manual permita reactivar las animaciones.
+
 `npm run build` genera la demo actual en `dist/pages/`. `npm run test:pages` construye y sirve ese paquete real en `/` y `/mesaOS/`, además de una entrega configurada en `/cliente/`. No sustituye el catálogo mediante scripts de arranque del navegador. Recorre todas las categorías y subcategorías a 1440, 820, 390 y 320 px, compara los productos visibles, verifica que puedan añadirse, prueba búsqueda sin acentos, opciones obligatorias, creación de pedido, impresión simulada y persistencia tras recargar. También comprueba imágenes, carga de estilos, ausencia de desbordamiento, errores JavaScript/HTTP y recursos solicitados fuera de la subruta. En la demo verifica 46 productos; en la entrega comprueba identidad, logo y disponibilidad del PDF.
 
 La suite comprueba además construcción repetible, exclusión de archivos internos, rechazo de sobrescrituras de entregas y detección de rutas con mayúsculas incorrectas. Las nuevas capturas se guardan en `test-results/pages/`. La prueba del PDF verifica su ruta HTTP, no su representación en un lector.

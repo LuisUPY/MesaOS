@@ -111,6 +111,24 @@ async function main() {
         await page.screenshot({ path: path.join(output, `${prefix === '/' ? 'root' : prefix.slice(1, -1)}-${width}.png`), fullPage: true });
       }
       await page.setViewportSize({ width: 1440, height: 1000 });
+      // La preferencia detiene CSS, canvas y vuelos, y sobrevive a una recarga.
+      await page.locator('#app-options > summary').click();
+      await page.getByRole('button', { name: 'Desactivar animaciones', exact: true }).click();
+      assert.equal(await page.locator('html').getAttribute('data-motion'), 'off');
+      assert.equal(await page.evaluate(() => document.getAnimations().filter(a => a.playState === 'running').length), 0);
+      assert.deepEqual(await page.evaluate(() => MesaOrderEffects.capture()), []);
+      if (prefix !== '/cliente/') {
+        assert.equal(await page.locator('#template-notice canvas').isVisible(), false);
+        assert.equal(await page.evaluate(async () => {
+          let draws = 0;
+          const original = CanvasRenderingContext2D.prototype.clearRect;
+          CanvasRenderingContext2D.prototype.clearRect = function(...args) { draws++; return original.apply(this, args); };
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          CanvasRenderingContext2D.prototype.clearRect = original;
+          return draws;
+        }), 0);
+      }
+      await page.locator('#app-options > summary').click();
       const query = prefix === '/cliente/' ? 'plato del dia' : 'chilaquiles';
       await page.locator('#product-search').fill(query);
       assert.ok(await page.locator('.product-card').count() > 0);
@@ -122,6 +140,7 @@ async function main() {
       const total = await page.locator('#order-total').textContent();
       assert.notEqual(total, '$0.00');
       await page.reload({ waitUntil: 'networkidle' });
+      assert.equal(await page.locator('html').getAttribute('data-motion'), 'off');
       assert.equal(await page.locator('#order-total').textContent(), total);
       if (prefix === '/cliente/') await page.locator('#cash-open-dialog [data-close]').click();
       const before = await page.evaluate(() => AmorStorage.cargarExpediente().pedidos.length);
@@ -133,13 +152,31 @@ async function main() {
       assert.ok(key.includes(encodeURIComponent(prefix)), key);
       await page.reload({ waitUntil: 'networkidle' });
       assert.equal(await page.evaluate(() => AmorStorage.cargarExpediente().pedidos.length), before + 1);
+      if (prefix === '/cliente/') await page.locator('#cash-open-dialog [data-close]').click();
+      await page.locator('#app-options > summary').click();
+      await page.getByRole('button', { name: 'Activar animaciones', exact: true }).click();
+      assert.equal(await page.locator('html').getAttribute('data-motion'), 'on');
+      if (prefix !== '/cliente/') assert.equal(await page.locator('#template-notice canvas').isVisible(), true);
       assert.deepEqual(errors, [], prefix);
       // Todas las solicitudes de recursos permanecen dentro de la subruta publicada.
       const urls = await page.evaluate(() => performance.getEntriesByType('resource').map(r => r.name));
       assert.ok(urls.every(url => url.startsWith(origin + prefix)), urls.join('\n'));
       await context.close();
-      console.log(`✓ ${prefix}: catálogo completo, búsqueda, opciones, pedido, persistencia y renderizado a 1440/820/390/320 px.`);
+      console.log(`✓ ${prefix}: catálogo, pedidos, modo ligero persistente y renderizado a 1440/820/390/320 px.`);
     }
+    const reducedContext = await browser.newContext({ reducedMotion: 'reduce' });
+    const reducedPage = await reducedContext.newPage();
+    await reducedPage.goto(origin + '/mesaOS/', { waitUntil: 'networkidle' });
+    assert.equal(await reducedPage.locator('html').getAttribute('data-motion'), 'off');
+    assert.equal(await reducedPage.locator('#template-notice canvas').isVisible(), false);
+    await reducedPage.locator('#app-options > summary').click();
+    await reducedPage.getByRole('button', { name: 'Activar animaciones', exact: true }).click();
+    assert.equal(await reducedPage.locator('html').getAttribute('data-motion'), 'on');
+    assert.notEqual(await reducedPage.locator('.workspace-waves').evaluate(el => getComputedStyle(el).animationName), 'none');
+    await reducedPage.reload({ waitUntil: 'networkidle' });
+    assert.equal(await reducedPage.locator('html').getAttribute('data-motion'), 'on');
+    await reducedContext.close();
+    console.log('✓ Movimiento reducido del sistema y elección manual de animaciones.');
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

@@ -73,3 +73,7 @@ Las pruebas de navegador usan Chrome instalado. Para usar Chromium de Playwright
 - [Pruebas existentes](docs/TESTING.md)
 
 Los datos operativos se guardan en el navegador y origen utilizados; no se sincronizan entre equipos.
+
+## Animaciones y modo ligero
+
+En **Opciones → Desactivar animaciones** puedes detener las partículas, fondos en movimiento, transiciones y efectos de los pedidos. También se quitan los desenfoques decorativos para reducir el trabajo gráfico. La preferencia se guarda por subruta en ese navegador, sin cambiar los pedidos ni la caja. El botón cambia a **Activar animaciones** para restaurarlas. Al abrir por primera vez se respeta la preferencia de movimiento reducido del sistema; una elección manual tiene prioridad. Si el navegador bloquea el almacenamiento, el botón funciona durante la sesión.

@@ -42,7 +42,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible 
 .catalog .catalog-heading {min-height:0;padding:0 0 22px;}
 .catalog .catalog-heading h1 {font-family:inherit;font-size:16px;font-weight:700;letter-spacing:.02em;line-height:1.4;margin:0;}
 img[src*="assets/img/categorias/"] {filter:grayscale(1);}
-@media(prefers-reduced-motion:reduce){.workspace-waves,.order-panel,.open-orders-bar,.page-footer{animation:none;}}
+@media(prefers-reduced-motion:reduce){html:not([data-motion="on"]) :is(.workspace-waves,.order-panel,.open-orders-bar,.page-footer){animation:none;}}
 @media print{.workspace-waves{display:none;}.order-panel,.open-orders-bar,.page-footer{background-image:none;animation:none;}}
 
 /* Translucent subcategory pills reveal the pastel ribbons underneath. */
@@ -61,7 +61,17 @@ img[src*="assets/img/categorias/"] {filter:grayscale(1);}
 .order-transfer-item {position:fixed;z-index:1000;margin:0;padding:14px 16px;overflow:hidden;pointer-events:none;transform-origin:center;border:2px solid transparent;border-radius:12px;background:linear-gradient(#fff,#fff) padding-box,var(--order-gradient) border-box;box-shadow:0 8px 28px #00000016;font-size:12px;}
 .order-transfer-item .line-heading {display:flex;justify-content:space-between;gap:12px;}
 .order-transfer-item h3 {font-size:12px;}
-@media(prefers-reduced-motion:reduce){#review-order::before,#confirm-order::before{animation:none!important;transition:none;}.order-transfer-item{display:none;}}
+@media(prefers-reduced-motion:reduce){html:not([data-motion="on"]) :is(#review-order,#confirm-order)::before{animation:none!important;transition:none;}html:not([data-motion="on"]) .order-transfer-item{display:none;}}
 @media print{.order-transfer-item{display:none!important;}}
 
 #review-order:not(:disabled):hover::before,#confirm-order:not(:disabled):hover::before {opacity:.6;}
+
+/* Modo ligero: detener también pseudo-elementos, desplazamientos y desenfoques. */
+html[data-motion="off"] *,html[data-motion="off"] *::before,html[data-motion="off"] *::after {
+  animation:none!important;
+  transition:none!important;
+  scroll-behavior:auto!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html[data-motion="off"] .order-transfer-item {display:none!important;}

@@ -10,7 +10,7 @@
     notice.prepend(canvas);
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const reduced = { get matches() { return globalThis.MesaMotion?.disabled() ?? matchMedia('(prefers-reduced-motion: reduce)').matches; } };
     let width = 0, height = 0, frame = 0, previous = 0, visible = true;
     const pointer = {x: 0, y: 0, targetX: 0, targetY: 0, localX: 0, localY: 0, influence: 0, targetInfluence: 0};
     // Global parallax follows the cursor; nearby particles gently move away from it.
@@ -76,7 +76,9 @@
       if (!reduced.matches && visible && !document.hidden) frame = requestAnimationFrame(draw);
     }
     function restart() {
-      cancelAnimationFrame(frame); previous = 0;
+      cancelAnimationFrame(frame); frame = 0; previous = 0;
+      canvas.hidden = reduced.matches;
+      if (reduced.matches) { releasePointer(); return; }
       if (visible && !document.hidden) frame = requestAnimationFrame(draw);
     }
     new ResizeObserver(() => {
@@ -87,7 +89,7 @@
       ctx.setTransform(scale, 0, 0, scale, 0, 0); restart();
     }).observe(notice);
     new IntersectionObserver(entries => { visible = entries[0].isIntersecting; restart(); }).observe(notice);
-    reduced.addEventListener('change', () => { releasePointer(); restart(); });
+    document.addEventListener('mesa-motion-change', () => { releasePointer(); restart(); });
     document.addEventListener('visibilitychange', restart);
   });
 })();

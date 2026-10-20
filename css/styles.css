@@ -1389,7 +1389,7 @@ svg {
 }
 
 @media(prefers-reduced-motion:reduce) {
-  *,*:before,*:after {
+  html:not([data-motion="on"]) *,html:not([data-motion="on"]) *:before,html:not([data-motion="on"]) *:after {
     scroll-behavior:auto!important;
     transition:none!important
   }

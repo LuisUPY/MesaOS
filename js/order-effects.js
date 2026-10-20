@@ -1,7 +1,7 @@
 /* Presentation only: order data, prices and storage stay in their existing modules. */
 globalThis.MesaOrderEffects = (() => {
   'use strict';
-  const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduced = () => globalThis.MesaMotion?.disabled() ?? matchMedia('(prefers-reduced-motion: reduce)').matches;
   function gradient(pedido) {
     const hue = ((Number(pedido.numero) || 0) * 137.50776405003785) % 360;
     const angle = 105 + ((Number(pedido.numero) || 0) * 47 % 150);
@@ -48,6 +48,7 @@ globalThis.MesaOrderEffects = (() => {
       return Promise.race([animation.finished.catch(() => {}),new Promise(resolve => setTimeout(resolve, 1000))]).finally(cleanup);
     });
     return Promise.all(flights).then(() => {
+      if (reduced()) return;
       const destination = shown ? card : document.getElementById('open-orders-count');
       destination.animate([{transform:'scale(1)'},{transform:'scale(1.04)',offset:.4},{transform:'scale(1)'}],{duration:280,easing:'ease-out'});
     });
