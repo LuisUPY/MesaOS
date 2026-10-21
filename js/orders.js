@@ -73,6 +73,7 @@ globalThis.AmorOrders = (() => {
     if (ocupado) throw new Error(`${etiqueta} ya tiene una cuenta pendiente (N° ${ocupado.numero}). Añade los productos a esa cuenta.`);
   }
   function agregarPartidas(pedido, partidas, pedidos = []) {
+    if (pedido.partidas.some(p => p.descuentoCentavos)) throw new Error('Quita el descuento antes de modificar los productos de la cuenta.');
     if (!estaAbierto(pedido)) throw new Error('Este pedido ya está cerrado. Crea un pedido nuevo.');
     validarMesaDisponible(pedidos, pedido.etiqueta, pedido.id);
     if (!partidas.length) throw new Error('Agrega productos al pedido.');
@@ -92,6 +93,7 @@ globalThis.AmorOrders = (() => {
     return resultado;
   }
   function eliminarPartida(pedido, partidaId, fecha = new Date().toISOString()) {
+    if (pedido.partidas.some(p => p.descuentoCentavos)) throw new Error('Quita el descuento antes de modificar los productos de la cuenta.');
     const partida = pedido.partidas.find(item => item.id === partidaId);
     if (!partida) throw new Error('Este producto ya no está en el pedido.');
     if (partida.pagado) throw new Error('No se pueden eliminar productos ya cobrados.');
@@ -103,6 +105,29 @@ globalThis.AmorOrders = (() => {
     resultado.partidasEliminadas = [...(resultado.partidasEliminadas || []), { ...copia(partida), eliminadoEn: fecha }];
     resultado.totalCentavos = AmorPOS.totalPedido(resultado.partidas);
     resultado.estado = estadoPedido(resultado);
+    return resultado;
+  }
+  function aplicarDescuento(pedido, tipo, valor) {
+    if (!pedido.partidas.length || pedido.partidas.some(p => p.pagado)) throw new Error('El descuento solo se puede cambiar antes del primer cobro.');
+    const resultado = copia(pedido);
+    const bases = resultado.partidas.map(p => { delete p.descuentoCentavos; return AmorPOS.importePartida(p); });
+    const subtotal = AmorPOS.totalPedido(resultado.partidas);
+    const texto = String(valor).trim().replace(',', '.');
+    if (!['monto', 'porcentaje'].includes(tipo) || !/^\d+(?:\.\d{1,2})?$/.test(texto)) throw new Error('Escribe un descuento válido con hasta dos decimales.');
+    const unidades = Math.round(Number(texto) * 100);
+    if (!Number.isSafeInteger(unidades) || unidades < 0 || (tipo === 'porcentaje' && unidades > 10000)) throw new Error('El porcentaje debe estar entre 0 y 100.');
+    const descuento = tipo === 'monto' ? unidades : Number((BigInt(subtotal) * BigInt(unidades) + 5000n) / 10000n);
+    if (descuento > subtotal) throw new Error('El descuento no puede superar el subtotal de la cuenta.');
+    // Reparte al centavo para que los cobros por producto y los cortes sumen el neto.
+    const cuotas = bases.map((base, index) => {
+      const producto = BigInt(base) * BigInt(descuento);
+      return { index, monto: subtotal ? Number(producto / BigInt(subtotal)) : 0, resto: subtotal ? producto % BigInt(subtotal) : 0n };
+    });
+    const faltantes = descuento - cuotas.reduce((sum, c) => sum + c.monto, 0);
+    const prioridad = [...cuotas].sort((a,b) => a.resto === b.resto ? a.index-b.index : a.resto > b.resto ? -1 : 1);
+    for (let i=0; i<faltantes; i++) prioridad[i].monto++;
+    for (const cuota of cuotas) if (cuota.monto) resultado.partidas[cuota.index].descuentoCentavos = cuota.monto;
+    resultado.totalCentavos = AmorPOS.totalPedido(resultado.partidas);
     return resultado;
   }
   function marcarPartida(pedido, partidaId, accion, fecha = new Date().toISOString()) {
@@ -120,6 +145,6 @@ globalThis.AmorOrders = (() => {
     resultado.estado = estadoPedido(resultado);
     return resultado;
   }
-  return Object.freeze({ nuevoPedido, estadoPedido, estaAbierto, marcarPartida, agregarPartidas, eliminarPartida,
+  return Object.freeze({ nuevoPedido, aplicarDescuento, estadoPedido, estaAbierto, marcarPartida, agregarPartidas, eliminarPartida,
     cuentaPendiente, validarMesaDisponible, claveEtiqueta, pedidoConEtiqueta, numeroDelivery, siguienteDelivery, resolverEtiqueta });
 })();

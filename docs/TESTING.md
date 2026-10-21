@@ -59,3 +59,7 @@ Crear y confirmar tienen un destello de degradado al activar sus botones. Despu�
 Los bordes degradados se derivan del número estable del pedido, con variación de matiz y orientación; conservan su aspecto al recargar sin almacenar información adicional. El número y la etiqueta siguen identificando el pedido además del color.
 
 Verificación: 25 pruebas de lógica, ambas suites existentes de navegador y `npm run check` aprobados. La copia de compatibilidad de la suite original añade comprobaciones del traslado y su limpieza, cola oculta, color estable al recargar, degradados diferentes, movimiento reducido y ausencia de traslado cuando falla la escritura. Los originales permanecen intactos.
+
+## Regresión de la vista previa del pedido
+
+`tests/order-preview-browser.test.cjs` usa el paquete real de GitHub Pages bajo `/mesaOS/`. Reproduce la lista de productos colapsada a 0 px a 1440 × 800 con la barra de pedidos abierta, aunque existen partidas y total. Verifica alto mínimo visible, acciones dentro del panel, barra abierta/cerrada, recarga del borrador, ventanas cortas y altas, móvil y desplazamiento de cuentas largas. Se ejecuta en `npm run test:browser`; `npm run test:preview:webkit` permite comprobar también WebKit. Para una instalación distinta de WebKit se puede indicar `MESAOS_WEBKIT_EXECUTABLE`.

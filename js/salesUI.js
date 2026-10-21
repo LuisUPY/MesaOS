@@ -66,6 +66,7 @@ globalThis.AmorSalesUI = (() => {
       if (options) content.append(node('p', 'line-options', options));
       if (partida.nota) content.append(node('p', 'line-note', `Nota: ${partida.nota}`));
       content.append(estados(partida));
+      if (partida.descuentoCentavos) content.append(node('p', 'line-options', `Con descuento: ${dinero(AmorPOS.importePartida(partida) / 100)}`));
       if (partida.pagado) content.append(node('p', 'line-options', resumenPago(partida)));
       if (pedido) {
         const actions = node('div', 'line-state-actions');
@@ -73,7 +74,7 @@ globalThis.AmorSalesUI = (() => {
         const pay = button(partida.pagado ? 'Pagado ✓' : 'Cobrar producto', 'secondary-button', () => solicitarCobro(pedido.id, partida.id));
         const remove = button('Eliminar producto', 'secondary-button remove-product-button', () => solicitarEliminacion(pedido.id, partida.id));
         prepare.disabled = partida.preparado; pay.disabled = partida.pagado;
-        remove.disabled = partida.pagado || !AmorOrders.estaAbierto(pedido);
+        remove.disabled = partida.pagado || !AmorOrders.estaAbierto(pedido) || pedido.partidas.some(p => p.descuentoCentavos);
         if (partida.pagado) remove.title = 'Los productos ya cobrados no se pueden eliminar.';
         actions.append(prepare, pay, remove); content.append(actions);
       }
@@ -147,15 +148,22 @@ globalThis.AmorSalesUI = (() => {
       if (!pedido.partidas.length) $('ticket-lines').append(node('p', 'empty-state', 'Pedido cancelado. Todos sus productos se eliminaron.'));
       renderEliminados(pedido);
       $('ticket-total').textContent = dinero(pedido.totalCentavos / 100);
+      const descuento = pedido.partidas.reduce((sum, p) => sum + (p.descuentoCentavos || 0), 0);
+      $('ticket-discount-summary').hidden = !descuento;
+      $('ticket-discount-summary').textContent = `Subtotal ${dinero((pedido.totalCentavos + descuento) / 100)} · Descuento −${dinero(descuento / 100)}`;
+      $('ticket-discount-fields').disabled = !pedido.partidas.length || pedido.partidas.some(p => p.pagado);
+      $('ticket-discount-value').value = (descuento / 100).toFixed(2);
+      $('ticket-discount-type').value = 'monto';
+      $('ticket-discount-error').hidden = true;
       $('prepare-all').disabled = pedido.partidas.every(partida => partida.preparado);
       $('pay-all').disabled = pedido.partidas.every(partida => partida.pagado);
-      $('add-to-order').disabled = !AmorOrders.estaAbierto(pedido);
+      $('add-to-order').disabled = !AmorOrders.estaAbierto(pedido) || pedido.partidas.some(p => p.descuentoCentavos);
       const { comandaAlimentos, comandaBebidas } = pedido.partidas.length ? AmorPrinting.separarComandas(pedido) : { comandaAlimentos: [], comandaBebidas: [] };
       $('reprint-kitchen').disabled = !comandaAlimentos.length;
       $('reprint-bar').disabled = !comandaBebidas.length;
       $('reprint-order').disabled = !pedido.partidas.length;
       $('print-bill').disabled = !pedido.partidas.length;
-      const pagado = pedido.partidas.filter(p => p.pagado).reduce((total, p) => total + p.precioUnitarioCentavos * p.cantidad, 0);
+      const pagado = pedido.partidas.filter(p => p.pagado).reduce((total, p) => total + AmorPOS.importePartida(p), 0);
       $('ticket-balance').textContent = `Abonado ${dinero(pagado / 100)} · Pendiente ${dinero((pedido.totalCentavos - pagado) / 100)}`;
     }
     function renderQueue() {
@@ -234,7 +242,7 @@ globalThis.AmorSalesUI = (() => {
         title.append(node('span', 'text-button', `Pedido N° ${pedido.numero} ↗`), node('span', 'status-badge', pedido.estado), node('strong', '', dinero(pedido.totalCentavos / 100)));
         open.append(title, node('span', 'history-order-label', pedido.etiqueta || 'Sin etiqueta'));
         card.append(open);
-        const cobrado = pedido.partidas.filter(p => p.pagado && fechaLocal(p.pagadoEn) === selected.fecha).reduce((sum, p) => sum + p.precioUnitarioCentavos * p.cantidad, 0);
+        const cobrado = pedido.partidas.filter(p => p.pagado && fechaLocal(p.pagadoEn) === selected.fecha).reduce((sum, p) => sum + AmorPOS.importePartida(p), 0);
         open.append(node('span', 'history-order-note', `Pagado en este día: ${dinero(cobrado / 100)} · Ver detalle y reimpresiones`));
         return card;
       }));
@@ -267,6 +275,23 @@ globalThis.AmorSalesUI = (() => {
       if ($('history-dialog').open) renderHistory();
       if ($('ticket-dialog').open) renderTicket();
     }
+    function guardarDescuento(quitar = false) {
+      try {
+        const next = getState();
+        const index = next.pedidos.findIndex(p => p.id === activeOrderId);
+        if (index < 0) throw new Error('No se encontró la cuenta.');
+        if (!quitar && $('ticket-discount-value').validity.badInput) throw new Error('Escribe un descuento válido.');
+        next.pedidos[index] = AmorOrders.aplicarDescuento(next.pedidos[index], quitar ? 'monto' : $('ticket-discount-type').value, quitar ? '0' : $('ticket-discount-value').value);
+        if (!commit(next)) throw new Error('No se guardó el descuento. Intenta de nuevo.');
+        renderTicket();
+        notify(quitar ? 'Descuento retirado' : 'Descuento aplicado');
+      } catch (error) {
+        $('ticket-discount-error').textContent = error.message;
+        $('ticket-discount-error').hidden = false;
+      }
+    }
+    $('apply-ticket-discount').addEventListener('click', () => guardarDescuento());
+    $('remove-ticket-discount').addEventListener('click', () => guardarDescuento(true));
     $('history-button').addEventListener('click', () => openHistory());
     $('confirm-remove-item').addEventListener('click', confirmarEliminacion);
     $('remove-item-dialog').addEventListener('close', () => { pendingRemoval = null; });

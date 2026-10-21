@@ -33,3 +33,17 @@ La maestra se regenera con `node scripts/build.cjs --sync-template`, conservando
 Para cambiar el menú o marca de un cliente, se modifica su archivo del vendedor y se vuelve a generar una entrega con el mismo id. Se publican los archivos nuevos en la misma URL. No es necesario darle al cliente herramientas de configuración.
 
 Los pedidos confirmados conservan snapshots de nombres, precios y opciones. El comportamiento original recalcula el borrador al recargar con el catálogo vigente; por eso se deben confirmar o vaciar los borradores y adiciones antes de una actualización de menú. No se deben cambiar moneda o zona horaria de una instalación con ventas sin una migración explícita.
+
+## Pie de ticket opcional
+
+En Opciones > Configuración > Ajustar ticket, el restaurante puede cargar una imagen QR PNG, JPEG o WebP de hasta 1 MiB (100 a 4096 píxeles por lado), añadir un texto opcional y guardar o quitar el QR. Esta personalización no cambia identidad ni menú. Se almacena por restaurante y ruta del sitio en el navegador actual; no se incluye en el expediente de ventas ni se sincroniza entre dispositivos. Si se borran los datos del navegador, hay que volver a cargarla. El nombre mesaOS aparece al final de las cuentas con o sin QR. La imagen debe contener el QR ya generado; la aplicación no cambia su destino ni verifica su contenido. Conviene probar su lectura en una impresión real.
+
+## Descuentos en cuentas
+
+El detalle del pedido permite aplicar un monto fijo o porcentaje (hasta dos decimales, incluido 100%). El descuento se distribuye proporcionalmente entre las partidas con reparto exacto de centavos: cobros por producto, caja, historial y expediente usan los importes netos, conservando precios originales. El ticket muestra subtotal, descuento solo cuando existe y total final. Se puede reemplazar o quitar antes del primer cobro; después queda bloqueado para conservar los pagos registrados. Para añadir o eliminar productos de una cuenta descontada, primero hay que quitar el descuento.
+
+## Menú PDF desde la aplicación
+
+Opciones > Configuración reúne el menú PDF y los ajustes del ticket. El dueño puede seleccionar y guardar un PDF de hasta 10 MiB. El enlace Menú de Opciones abre el PDF guardado; reemplazarlo no modifica el catálogo ni sus precios. Restablecer menú elimina la copia cargada y recupera el PDF original de la instalación, si existe; en otro caso oculta el enlace.
+
+El archivo se conserva como Blob en IndexedDB, separado del expediente de ventas y aislado por restaurante y ruta de instalación. Al borrar los datos del navegador se pierde esta copia. No se incluye en las exportaciones del expediente ni se comparte entre dispositivos; para eso hará falta conectar el almacenamiento en la nube. No se modifica el contenido interno del PDF: se reemplaza por otro archivo.

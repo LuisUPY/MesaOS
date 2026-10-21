@@ -309,7 +309,7 @@ globalThis.AmorCash = (() => {
   function importePartida(partida) {
     if (!partida || !Number.isInteger(partida.cantidad) || partida.cantidad < 1 || partida.cantidad > 99 ||
       !entero(partida.precioUnitarioCentavos) || !entero(partida.cantidad * partida.precioUnitarioCentavos)) throw new Error('Importe del producto inválido.');
-    return partida.cantidad * partida.precioUnitarioCentavos;
+    return AmorPOS.importePartida(partida);
   }
   function cobrarPartidas(pedido, partidaId, caja, pago, fecha = new Date().toISOString()) {
     const siguienteCaja = exigirAbierta(caja);

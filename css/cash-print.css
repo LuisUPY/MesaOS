@@ -98,3 +98,26 @@
   .corte-fecha, .corte-ayuda { font-size: 11px; line-height: 1.4; margin: 4px 0; }
   .corte-movimiento + .corte-movimiento { margin-top: 10px; }
 }
+
+.ticket-discount { margin: 18px 0; }
+.ticket-discount summary { cursor: pointer; }
+.ticket-discount fieldset { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; border: 1px solid var(--line); padding: 14px; }
+.ticket-discount label { display: grid; gap: 6px; }
+.ticket-discount input, .ticket-discount select { max-width: 170px; padding: 10px; font: inherit; }
+.ticket-qr-preview { display: block; width: 180px; height: 180px; object-fit: contain; margin: 18px auto; background: white; }
+.ticket-qr-preview img { width: 100%; height: 100%; object-fit: contain; }
+.ticket-qr-preview[hidden] { display: none; }
+#ticket-settings-error, #ticket-discount-error { font-size: 14px; line-height: 1.5; }
+@media print {
+  .cuenta-qr { text-align: center; margin-top: 4mm; break-inside: avoid; }
+  .cuenta-qr-imagen { display: block; width: 32mm; height: 32mm; object-fit: contain; margin: 0 auto; image-rendering: pixelated; }
+  .cuenta-qr-texto { margin: 2mm 0; overflow-wrap: anywhere; }
+  .cuenta-sistema { text-align: center; border-top: 1px dashed black; padding-top: 3mm; margin: 4mm 0 0; font-size: 11px; }
+}
+
+.settings-section { padding: 20px 0; border-top: 1px solid var(--line); }
+.settings-section h3 { margin: 0 0 10px; font-size: 18px; }
+.settings-section fieldset { border: 0; padding: 0; margin: 16px 0 0; min-width: 0; }
+.settings-section legend { font-size: 12px; margin-bottom: 10px; }
+.settings-file { padding: 12px; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; font-size: 14px; overflow-wrap: anywhere; }
+.settings-section input[type="file"] { box-sizing: border-box; width: 100%; min-width: 0; font-size: 13px; }

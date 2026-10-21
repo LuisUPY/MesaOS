@@ -7,10 +7,13 @@
     "start": "python3 -m http.server 4187 --bind 127.0.0.1",
     "build": "node scripts/build.cjs",
     "preview": "python3 -m http.server 4188 --bind 127.0.0.1 --directory dist/pages",
-    "test": "node --test tests/menu.test.cjs tests/sales.test.cjs tests/cash.test.cjs tests/tips.test.cjs tests/printing.test.cjs tests/removal.test.cjs",
-    "test:browser": "node tests/compat/browser.test.cjs && node tests/compat/cash-browser.test.cjs",
+    "test": "node --test tests/menu.test.cjs tests/sales.test.cjs tests/cash.test.cjs tests/tips.test.cjs tests/printing.test.cjs tests/removal.test.cjs tests/discounts.test.cjs",
+    "test:browser": "node tests/compat/browser.test.cjs && node tests/compat/cash-browser.test.cjs && node tests/ticket-features-browser.test.cjs && node tests/order-preview-browser.test.cjs",
+    "test:preview:webkit": "MESAOS_PREVIEW_ENGINE=webkit node tests/order-preview-browser.test.cjs",
     "test:pages": "node tests/pages.test.cjs",
     "check": "node scripts/check.cjs"
   },
-  "devDependencies": { "playwright": "1.64.1" }
+  "devDependencies": {
+    "playwright": "1.64.1"
+  }
 }

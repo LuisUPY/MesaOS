@@ -70,11 +70,19 @@
     };
   }
 
+  function importePartida(partida) {
+    if (!Number.isInteger(partida.cantidad) || partida.cantidad < 1 || partida.cantidad > 99) throw new Error('La cantidad debe estar entre 1 y 99.');
+    const bruto = partida.precioUnitarioCentavos * partida.cantidad;
+    if (!Number.isSafeInteger(partida.precioUnitarioCentavos) || partida.precioUnitarioCentavos < 0 || !Number.isSafeInteger(bruto)) throw new Error('Importe de partida inválido.');
+    const descuento = partida.descuentoCentavos ?? 0;
+    if (!Number.isSafeInteger(descuento) || descuento < 0 || descuento > bruto) throw new Error('Descuento de partida inválido.');
+    return bruto - descuento;
+  }
   function totalPedido(partidas) {
     return partidas.reduce((total, partida) => {
-      if (!Number.isInteger(partida.cantidad) || partida.cantidad < 1 || partida.cantidad > 99) throw new Error('La cantidad debe estar entre 1 y 99.');
-      if (!Number.isInteger(partida.precioUnitarioCentavos) || partida.precioUnitarioCentavos < 0) throw new Error('Importe de partida inválido.');
-      return total + partida.precioUnitarioCentavos * partida.cantidad;
+      const siguiente = total + importePartida(partida);
+      if (!Number.isSafeInteger(siguiente)) throw new Error('Total fuera del límite seguro.');
+      return siguiente;
     }, 0);
   }
 
@@ -95,5 +103,5 @@
     };
   }
 
-  globalThis.AmorPOS = Object.freeze({ catalogo, porId, dinero, centavos, buscar, crearPartida, crearExtra, totalPedido });
+  globalThis.AmorPOS = Object.freeze({ catalogo, porId, dinero, centavos, buscar, crearPartida, crearExtra, importePartida, totalPedido });
 })();

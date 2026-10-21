@@ -213,7 +213,8 @@ async function main() {
     assert.equal(await page.locator('.order-transfer-item').count(), 0);
     assert.notEqual(await page.locator('[data-pedido="pedido-4"]').evaluate(n => n.style.getPropertyValue('--order-gradient')), orderGradient);
     assert.equal(await page.locator('[data-pedido="pedido-4"]').count(), 1);
-    assert.equal(await page.locator('input[type="file"]').count(), 0);
+    assert.equal(await page.locator('input[type="file"]:not(#ticket-qr-file):not(#menu-pdf-file)').count(), 0);
+    assert.equal(await page.locator('#ticket-qr-file').count(), 1);
     assert.equal(downloads, 0);
     assert.deepEqual(errors, []);
 

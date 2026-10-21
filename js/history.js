@@ -18,7 +18,7 @@ globalThis.AmorHistory = (() => {
       for (const partida of pedido.partidas) {
         if (!partida.pagado || fechaLocal(partida.pagadoEn) !== fecha) continue;
         tienePago = true;
-        resumen.totalCentavos += partida.precioUnitarioCentavos * partida.cantidad;
+        resumen.totalCentavos += AmorPOS.importePartida(partida);
         resumen.productos += partida.cantidad;
         if (Object.hasOwn(resumen.categorias, partida.macroCategoria)) resumen.categorias[partida.macroCategoria] += partida.cantidad;
         else resumen.extras += partida.cantidad;

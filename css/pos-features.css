@@ -26,7 +26,10 @@ body { padding-bottom: calc(var(--queue-height) + 22px); }
 .product-card .category-label { max-width: 150px; }
 .draft-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .draft-actions .secondary-button { font-size: 11px; padding: 9px 12px; }
-.order-panel { max-height: calc(100dvh - 148px - var(--queue-height)); min-height: min(690px, calc(100dvh - 148px - var(--queue-height))); }
+.order-panel { max-height: none; min-height: min(690px, calc(100dvh - 148px - var(--queue-height))); }
+/* La lista nunca debe ceder todo su alto a etiquetas, cobro o barra de pedidos.
+   El panel puede crecer y la página permite llegar a todas sus acciones. */
+.order-items { flex: 1 0 auto; min-height: 150px; max-height: clamp(150px, calc(100dvh - 700px - var(--queue-height)), 440px); }
 .order-heading { margin-bottom: 17px; flex: none; }
 .order-label { flex: none; }
 .order-label-controls { flex: none; }
@@ -168,7 +171,7 @@ body { padding-bottom: calc(var(--queue-height) + 22px); }
 body[data-queue-collapsed="true"] { --queue-height: 45px; }
 .toast { bottom: calc(var(--queue-height) + 20px); }
 @media(max-width: 900px) {
-  .order-panel { max-height: calc(100dvh - 128px - var(--queue-height)); min-height: min(580px, calc(100dvh - 128px - var(--queue-height))); }
+  .order-panel { max-height: none; min-height: min(580px, calc(100dvh - 128px - var(--queue-height))); }
   .history-layout { grid-template-columns: 175px minmax(0, 1fr); gap: 18px; }
   .history-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .history-metric.sales-total { grid-column: 1 / -1; }
@@ -210,7 +213,7 @@ body[data-queue-collapsed="true"] { --queue-height: 45px; }
   body:has(.mobile-order-link:not([hidden])) { padding-bottom: calc(var(--queue-height) + 90px); }
   .toast { bottom: calc(var(--queue-height) + 75px); }
 }
-@media(max-height: 760px) and (min-width: 701px) {
+@media(max-height: 1000px) and (min-width: 701px) {
   .order-panel { position: static; max-height: none; min-height: 490px; }
   .order-items { max-height: 290px; flex: none; min-height: 150px; }
 }

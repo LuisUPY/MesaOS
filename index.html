@@ -27,6 +27,8 @@
   <script src="js/order-effects.js" defer></script>
   <script src="js/salesUI.js?v=20261020-orders1" defer></script>
   <script src="js/cashUI.js" defer></script>
+  <script src="js/menuSettings.js" defer></script>
+  <script src="js/ticketSettings.js" defer></script>
   <script src="js/printing.js" defer></script>
   <script src="js/app.js?v=20261020-orders1" defer></script>
 </head>
@@ -51,6 +53,7 @@
     <details id="app-options" class="options-dropdown app-options">
       <summary>Opciones</summary>
       <nav class="options-panel" aria-label="Opciones de la aplicación">
+        <button id="settings-button" type="button">Configuración</button>
         <button id="animations-toggle" type="button">Desactivar animaciones</button>
         <a id="restaurant-menu" hidden href="#" target="_blank" rel="noopener">Menú ↗</a>
         <button id="load-expediente" type="button">Cargar expediente</button>
@@ -141,6 +144,16 @@
     <div class="ticket-tools"><button id="add-to-order" type="button" class="secondary-button">Añadir productos +</button></div>
     <div id="ticket-lines" class="ticket-lines"></div>
     <details id="ticket-removed" class="ticket-removed" hidden><summary id="ticket-removed-title">Productos eliminados</summary><div id="ticket-removed-lines"></div></details>
+    <details class="ticket-discount"><summary>Aplicar descuento</summary>
+      <p class="group-help">Aplica a toda la cuenta antes del primer cobro. Quita el descuento antes de añadir o eliminar productos.</p>
+      <fieldset id="ticket-discount-fields"><legend>Descuento de la cuenta</legend>
+        <label>Tipo <select id="ticket-discount-type"><option value="monto">Monto fijo</option><option value="porcentaje">Porcentaje</option></select></label>
+        <label>Valor <input id="ticket-discount-value" type="number" min="0" step="0.01" inputmode="decimal"></label>
+        <button id="apply-ticket-discount" class="secondary-button" type="button">Aplicar descuento</button>
+        <button id="remove-ticket-discount" class="secondary-button" type="button">Quitar descuento</button>
+      </fieldset><p id="ticket-discount-error" role="alert" hidden></p>
+    </details>
+    <p id="ticket-discount-summary" class="ticket-balance" hidden></p>
     <div class="review-total"><span>Total del pedido</span><strong id="ticket-total"></strong></div>
     <p id="ticket-balance" class="ticket-balance"></p>
     <div class="ticket-reprints" role="group" aria-label="Reimpresiones del pedido">
@@ -149,6 +162,38 @@
       <button id="print-bill" type="button" class="secondary-button">Reimprimir Cuenta</button>
     </div>
     <div class="ticket-actions"><button id="prepare-all" type="button" class="secondary-button">Preparar todo</button><button id="reprint-order" type="button" class="secondary-button">Reimprimir ambas áreas</button><button id="pay-all" type="button" class="primary-button">Cobrar pendientes</button></div>
+  </dialog>
+
+  <dialog id="settings-dialog" class="modal small-modal settings-modal" aria-labelledby="settings-title">
+    <div class="modal-heading"><h2 id="settings-title">Configuración</h2><button type="button" class="close-button" data-close aria-label="Cerrar configuración">×</button></div>
+    <p class="group-help">Personaliza el menú que compartes y tus tickets. Los cambios se guardan en este navegador para este restaurante.</p>
+    <section class="settings-section" aria-labelledby="settings-menu-title">
+      <h3 id="settings-menu-title">Menú del restaurante</h3>
+      <p class="group-help">Sube o reemplaza el PDF que se abre desde Opciones → Menú. Este archivo no cambia los productos ni los precios del punto de venta.</p>
+      <p id="menu-pdf-current" class="settings-file" role="status" aria-live="polite">Consultando menú guardado…</p>
+      <fieldset id="menu-pdf-fields" disabled><legend>Archivo PDF</legend>
+        <label class="cash-field">Seleccionar menú (PDF; máximo 10 MiB)<input id="menu-pdf-file" type="file" accept="application/pdf,.pdf"></label>
+        <div class="confirm-actions"><button id="menu-pdf-remove" class="secondary-button" type="button">Restablecer menú</button><button id="menu-pdf-save" class="primary-button" type="button">Guardar PDF</button></div>
+      </fieldset>
+      <p class="group-help">Restablecer quita el PDF que subiste y recupera el menú original, si existe.</p>
+      <p id="menu-pdf-error" class="form-error" role="alert" hidden></p>
+    </section>
+    <section class="settings-section" aria-labelledby="settings-ticket-title">
+      <h3 id="settings-ticket-title">Ticket de cuenta</h3>
+      <p class="group-help">Agrega o cambia la imagen QR y su texto al pie del ticket.</p>
+      <button id="ticket-settings-button" type="button" class="secondary-button">Ajustar ticket</button>
+    </section>
+  </dialog>
+
+  <dialog id="ticket-settings-dialog" class="modal small-modal" aria-labelledby="ticket-settings-title">
+    <div class="modal-heading"><h2 id="ticket-settings-title">Configurar ticket</h2><button type="button" class="close-button" data-close aria-label="Cerrar configuración">×</button></div>
+    <p class="group-help">Imagen QR opcional para el pie de las cuentas. Se guarda para este restaurante en este navegador. Sube una imagen nítida con margen blanco y prueba que se pueda escanear al imprimir.</p>
+    <label class="cash-field">Imagen QR (PNG, JPEG o WebP; máximo 1 MiB)<input id="ticket-qr-file" type="file" accept="image/png,image/jpeg,image/webp"></label>
+    <label class="cash-field">Texto debajo del QR (opcional)<input id="ticket-qr-caption" type="text" maxlength="120"></label>
+    <div id="ticket-qr-preview" class="ticket-qr-preview" hidden></div>
+    <p id="ticket-settings-error" role="alert" hidden></p>
+    <div class="confirm-actions"><button id="ticket-qr-remove" class="secondary-button" type="button">Quitar QR</button><button id="ticket-qr-save" class="primary-button" type="button">Guardar</button></div>
+    <p class="group-help">El nombre mesaOS aparece al final del ticket.</p>
   </dialog>
 
   <dialog id="remove-item-dialog" class="modal small-modal" aria-labelledby="remove-item-title" aria-describedby="remove-item-description">

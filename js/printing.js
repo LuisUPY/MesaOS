@@ -118,7 +118,11 @@
       item.append(importes); lista.append(item);
     }
     const totales = elemento('div', 'cuenta-totales');
-    for (const [etiqueta, monto, clase] of [['Subtotal', pedido.totalCentavos, ''], ['TOTAL A PAGAR', pedido.totalCentavos, 'cuenta-total']]) {
+    const descuento = pedido.partidas.reduce((sum, p) => sum + (p.descuentoCentavos || 0), 0);
+    const resumen = [['Subtotal', pedido.totalCentavos + descuento, '']];
+    if (descuento) resumen.push(['Descuento', -descuento, '']);
+    resumen.push(['TOTAL A PAGAR', pedido.totalCentavos, 'cuenta-total']);
+    for (const [etiqueta, monto, clase] of resumen) {
       const fila = elemento('div', `cuenta-fila ${clase}`);
       fila.append(elemento('span', '', etiqueta), elemento('strong', '', AmorPOS.dinero(monto / 100)));
       totales.append(fila);
@@ -139,6 +143,17 @@
     if (!pagadas.length) pagos.append(elemento('p', 'cuenta-ayuda', 'Sin pagos ingresados.'));
     if (sinMetodo) pagos.append(elemento('p', 'cuenta-ayuda', 'Hay pagos anteriores sin método registrado.'));
     ticket.append(lista, totales, pagos, elemento('footer', 'comanda-pie', globalThis.MesaInstallation?.ticket.footer ?? 'Con Amor, Amor & Amor Cafetería'));
+    const qr = globalThis.MesaTicketSettings?.read();
+    if (qr?.image) {
+      const bloque = elemento('section', 'cuenta-qr');
+      const imagen = elemento('img', 'cuenta-qr-imagen');
+      imagen.src = qr.image;
+      imagen.alt = 'Código QR del restaurante';
+      bloque.append(imagen);
+      if (qr.caption) bloque.append(elemento('p', 'cuenta-qr-texto', qr.caption));
+      ticket.append(bloque);
+    }
+    ticket.append(elemento('p', 'cuenta-sistema', 'mesaOS'));
     return ticket;
   }
 
@@ -297,8 +312,19 @@
         zona.replaceChildren(ticket);
         document.title = tipo === 'corte' ? `Corte-${copia.id}${opciones.provisional ? '-previo' : ''}` : `Pedido-${copia.numero}-${ticket.dataset.area}`;
         // Cada área es un trabajo independiente; conserva el bloqueo entre diálogos.
-        if (window.requestAnimationFrame) frame = window.requestAnimationFrame(ejecutar);
-        else ejecutar();
+        const programar = () => {
+          if (trabajo.finalizado) return;
+          if (window.requestAnimationFrame) frame = window.requestAnimationFrame(ejecutar);
+          else ejecutar();
+        };
+        const imagen = ticket.querySelector?.('.cuenta-qr-imagen');
+        if (imagen) {
+          // No abrir el diálogo hasta que el QR esté listo para imprimirse.
+          const limite = setTimeout(() => finalizar(new Error('El QR no se pudo cargar. Revisa la imagen en Configurar ticket.')), 10000);
+          imagen.decode().then(() => { clearTimeout(limite); programar(); }, () => {
+            clearTimeout(limite); finalizar(new Error('No se pudo cargar el QR. Revisa la imagen en Configurar ticket.'));
+          });
+        } else programar();
       }
 
       try {
