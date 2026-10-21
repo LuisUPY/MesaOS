@@ -7,6 +7,7 @@
   let storageError = '';
   let salesUI = null;
   let cashUI = null;
+  let noteLineKey = null;
   try { expediente = AmorStorage.cargarExpediente(); }
   catch (error) { expediente = AmorStorage.vacio(); storageError = error.message; }
   const icons = {
@@ -16,6 +17,7 @@
     Postres: '<path d="M4 12h16v9H4zM3 12c0-3 3-5 5-5h8c2 0 5 2 5 5M4 17h16M12 3v4"/><path d="M12 1c-2 2-2 3 0 3s2-1 0-3"/>',
     Paquetes: '<path d="m3 7 9-4 9 4-9 4zM3 7v12l9 4 9-4V7M12 11v12M7 5l10 4"/>',
     options: '<path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="9" cy="18" r="2"/>',
+    write: '<path d="M13 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 3l5 5M9 15l1-5L18 2l4 4-8 8z"/>',
     bag: '<path d="M5 8h14l2 13H3zM8 9V6a4 4 0 0 1 8 0v3"/>'
   };
   function element(tag, className, content) {
@@ -124,7 +126,7 @@
       let descartadas = 0;
       for (const stored of (expediente.adicion || expediente.borrador).partidas) {
         try {
-          const partida = stored.tipo === 'extra' ? crearExtra(stored.nombre, stored.precioUnitarioCentavos / 100) : crearPartida(stored.productoId, stored.opciones, stored.nota);
+          const partida = stored.tipo === 'extra' ? crearExtra(stored.nombre, stored.precioUnitarioCentavos / 100, stored.nota) : crearPartida(stored.productoId, stored.opciones, stored.nota);
           const previa = state.partidas.find(item => item.clave === partida.clave);
           if (previa) previa.cantidad = Math.min(99, previa.cantidad + stored.cantidad);
           else state.partidas.push({ ...partida, cantidad: stored.cantidad });
@@ -368,7 +370,22 @@
         renderOrder(); saveDraft();
       });
       remove.setAttribute('aria-label', `Quitar ${line.nombre} del pedido`);
-      controls.append(quantity, element('span', 'line-unit', `${dinero(line.precioUnitario)} c/u`), remove);
+      const write = button('', 'line-note-button', () => {
+        const actual = state.partidas.find(p => p.clave === line.clave);
+        if (!actual) { notify('Este producto ya no está en la selección.'); return; }
+        noteLineKey = actual.clave;
+        $('line-note-product').textContent = `${actual.cantidad} × ${actual.nombre}`;
+        $('line-note-help').textContent = 'La observación se aplica a todas las unidades de esta selección y se imprime junto al producto en su comanda.';
+        $('line-note-input').value = actual.nota;
+        $('line-note-error').hidden = true;
+        $('line-note-dialog').showModal();
+        $('line-note-input').focus();
+      });
+      write.setAttribute('aria-label', `${line.nota ? 'Editar' : 'Añadir'} observación de ${line.nombre}`);
+      write.title = line.nota ? 'Editar observación' : 'Añadir observación';
+      write.dataset.hasNote = String(!!line.nota);
+      write.append(icon('write'));
+      controls.append(quantity, element('span', 'line-unit', `${dinero(line.precioUnitario)} c/u`), write, remove);
       item.append(controls);
     } else item.append(element('p', 'line-options', `${dinero(line.precioUnitario)} por unidad`));
     return item;
@@ -409,6 +426,24 @@
       $('order-items').replaceChildren(empty);
     }
   }
+
+  function guardarNota(quitar = false) {
+    try {
+      if (!noteLineKey) throw new Error('Vuelve a seleccionar el producto.');
+      const next = currentState();
+      const seleccion = next.adicion || next.borrador;
+      seleccion.partidas = AmorPOS.actualizarNota(seleccion.partidas, noteLineKey, quitar ? '' : $('line-note-input').value);
+      if (!commit(next)) throw new Error('No se guardó la observación. Intenta de nuevo.');
+      $('line-note-dialog').close();
+      notify(quitar ? 'Observación retirada' : 'Observación guardada');
+    } catch (error) {
+      $('line-note-error').textContent = error.message;
+      $('line-note-error').hidden = false;
+    }
+  }
+  $('line-note-form').addEventListener('submit', event => { event.preventDefault(); guardarNota(); });
+  $('line-note-remove').addEventListener('click', () => guardarNota(true));
+  $('line-note-dialog').addEventListener('close', () => { noteLineKey = null; });
 
   $('product-search').addEventListener('input', event => { state.busqueda = event.target.value; renderProducts(); });
   $('modifier-form').addEventListener('change', updateModifierPrice);

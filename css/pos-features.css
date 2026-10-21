@@ -217,3 +217,8 @@ body[data-queue-collapsed="true"] { --queue-height: 45px; }
   .order-panel { position: static; max-height: none; min-height: 490px; }
   .order-items { max-height: 290px; flex: none; min-height: 150px; }
 }
+
+.line-controls { flex-wrap: wrap; }
+.line-note-button { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 34px; height: 34px; padding: 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--muted); cursor: pointer; }
+.line-note-button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.line-note-button:hover, .line-note-button[data-has-note="true"] { background: var(--forest-soft); color: var(--forest); border-color: var(--forest); }

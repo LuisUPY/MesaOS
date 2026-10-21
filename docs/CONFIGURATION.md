@@ -47,3 +47,7 @@ El detalle del pedido permite aplicar un monto fijo o porcentaje (hasta dos deci
 Opciones > Configuración reúne el menú PDF y los ajustes del ticket. El dueño puede seleccionar y guardar un PDF de hasta 10 MiB. El enlace Menú de Opciones abre el PDF guardado; reemplazarlo no modifica el catálogo ni sus precios. Restablecer menú elimina la copia cargada y recupera el PDF original de la instalación, si existe; en otro caso oculta el enlace.
 
 El archivo se conserva como Blob en IndexedDB, separado del expediente de ventas y aislado por restaurante y ruta de instalación. Al borrar los datos del navegador se pierde esta copia. No se incluye en las exportaciones del expediente ni se comparte entre dispositivos; para eso hará falta conectar el almacenamiento en la nube. No se modifica el contenido interno del PDF: se reemplaza por otro archivo.
+
+## Observaciones por producto
+
+Cada selección del pedido tiene un botón de escritura para añadir, editar o quitar una observación de hasta 200 caracteres. La nota se aplica a todas las unidades de esa selección. Añadir de nuevo el mismo producto sin esa nota genera una selección separada. Al igualar las notas se reúnen cantidades sin superar 99 unidades. Las observaciones se conservan al recargar, incluidos los extras personalizados, y se imprimen debajo del producto en su comanda de Cocina o Barra. El editor también funciona al seleccionar productos para añadir a un pedido confirmado.

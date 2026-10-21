@@ -98,12 +98,24 @@
   <button id="mobile-order-link" class="mobile-order-link" type="button" aria-controls="order-panel" hidden><span>Ver pedido <span id="mobile-order-count" class="mobile-count"></span></span><strong id="mobile-order-total"></strong><span aria-hidden="true">↓</span></button>
   <footer class="page-footer"><span id="restaurant-tagline"></span><span id="currency-note">Precios en MXN</span><span class="platform-credit"><img src="assets/platform/mesaos-logo-transparent.png" alt="MesaOS" width="90" height="46"></span></footer>
 
+  <dialog id="line-note-dialog" class="modal small-modal" aria-labelledby="line-note-title" aria-describedby="line-note-help">
+    <form id="line-note-form">
+      <div class="modal-heading"><h2 id="line-note-title">Observación del producto</h2><button type="button" class="close-button" data-close aria-label="Cancelar observación">×</button></div>
+      <p id="line-note-product" class="modal-description"></p>
+      <p id="line-note-help" class="group-help"></p>
+      <label class="notes-field" for="line-note-input">Indicaciones de preparación<textarea id="line-note-input" rows="3" maxlength="200" placeholder="Por ejemplo: sin cebolla, poco hielo o servir aparte…"></textarea></label>
+      <p class="group-help">Máximo 200 caracteres.</p>
+      <p id="line-note-error" class="form-error" role="alert" hidden></p>
+      <div class="confirm-actions"><button id="line-note-remove" class="secondary-button" type="button">Quitar observación</button><button class="primary-button" type="submit">Guardar observación</button></div>
+    </form>
+  </dialog>
+
   <dialog id="modifier-dialog" class="modal" aria-labelledby="modifier-title" aria-describedby="modifier-description">
     <form id="modifier-form" novalidate>
       <div class="modal-heading"><div><p class="eyebrow">A TU GUSTO</p><h2 id="modifier-title"></h2></div><button class="close-button" type="button" data-close aria-label="Cerrar personalización">×</button></div>
       <p id="modifier-description" class="modal-description"></p>
       <div id="modifier-fields" class="modifier-fields"></div>
-      <label class="notes-field">Nota para cocina <span class="muted">· opcional</span><textarea id="modifier-note" maxlength="200" rows="2" placeholder="Algún detalle para preparar tu platillo…"></textarea></label>
+      <label class="notes-field">Observación de preparación <span class="muted">· opcional</span><textarea id="modifier-note" maxlength="200" rows="2" placeholder="Algún detalle para preparar tu platillo…"></textarea></label>
       <p id="modifier-error" class="form-error" role="alert" hidden></p>
       <div class="modal-footer"><div><span class="muted">Precio por unidad</span><strong id="modifier-total"></strong></div><button class="primary-button" type="submit">Agregar al pedido <span aria-hidden="true">+</span></button></div>
     </form>

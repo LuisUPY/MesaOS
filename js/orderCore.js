@@ -86,22 +86,43 @@
     }, 0);
   }
 
-  function crearExtra(concepto, monto) {
+  function crearExtra(concepto, monto, nota = '') {
     if (typeof concepto !== 'string' || !concepto.trim() || concepto.trim().length > 100) throw new Error('Escribe un concepto de hasta 100 caracteres.');
     const texto = String(monto).trim();
     if (!/^\d+(?:[.,]\d{1,2})?$/.test(texto)) throw new Error('Escribe un monto positivo con hasta dos decimales.');
     const valor = Number(texto.replace(',', '.'));
+    if (typeof nota !== 'string' || nota.length > 200) throw new Error('La nota debe tener hasta 200 caracteres.');
+    const notaLimpia = nota.trim();
     const precioUnitarioCentavos = centavos(valor);
     if (!Number.isSafeInteger(precioUnitarioCentavos) || precioUnitarioCentavos <= 0 || precioUnitarioCentavos > 99999999) throw new Error('El monto debe ser entre $0.01 y $999,999.99.');
     const nombre = concepto.trim();
     return {
-      clave: JSON.stringify(['extra', nombre, precioUnitarioCentavos]), tipo: 'extra',
+      clave: JSON.stringify(notaLimpia ? ['extra', nombre, precioUnitarioCentavos, notaLimpia] : ['extra', nombre, precioUnitarioCentavos]), tipo: 'extra',
       productoId: null, nombre, macroCategoria: null, subCategoria: 'Extras personalizados',
       precioBase: precioUnitarioCentavos / 100, extras: 0,
       precioUnitario: precioUnitarioCentavos / 100, precioUnitarioCentavos,
-      opciones: {}, selecciones: [], nota: '', cantidad: 1
+      opciones: {}, selecciones: [], nota: notaLimpia, cantidad: 1
     };
   }
 
-  globalThis.AmorPOS = Object.freeze({ catalogo, porId, dinero, centavos, buscar, crearPartida, crearExtra, importePartida, totalPedido });
+  // La nota forma parte de la selección: evita mezclar preparaciones distintas.
+  function actualizarNota(partidas, clave, nota) {
+    if (typeof nota !== 'string' || nota.length > 200) throw new Error('La observación debe tener hasta 200 caracteres.');
+    const index = partidas.findIndex(p => p.clave === clave);
+    if (index < 0) throw new Error('Este producto ya no está en la selección.');
+    const resultado = JSON.parse(JSON.stringify(partidas));
+    const partida = resultado[index];
+    partida.nota = nota.trim();
+    partida.clave = partida.tipo === 'extra'
+      ? JSON.stringify(partida.nota ? ['extra', partida.nombre, partida.precioUnitarioCentavos, partida.nota] : ['extra', partida.nombre, partida.precioUnitarioCentavos])
+      : JSON.stringify([partida.productoId, partida.opciones, partida.nota]);
+    const repetida = resultado.find((p, i) => i !== index && p.clave === partida.clave);
+    if (repetida) {
+      if (repetida.cantidad + partida.cantidad > 99) throw new Error('Estas selecciones iguales superarían las 99 unidades. Reduce su cantidad antes de guardar.');
+      repetida.cantidad += partida.cantidad;
+      resultado.splice(index, 1);
+    }
+    return resultado;
+  }
+  globalThis.AmorPOS = Object.freeze({ catalogo, porId, dinero, centavos, buscar, crearPartida, crearExtra, importePartida, totalPedido, actualizarNota });
 })();

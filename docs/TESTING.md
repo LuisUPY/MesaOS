@@ -63,3 +63,7 @@ Verificación: 25 pruebas de lógica, ambas suites existentes de navegador y `np
 ## Regresión de la vista previa del pedido
 
 `tests/order-preview-browser.test.cjs` usa el paquete real de GitHub Pages bajo `/mesaOS/`. Reproduce la lista de productos colapsada a 0 px a 1440 × 800 con la barra de pedidos abierta, aunque existen partidas y total. Verifica alto mínimo visible, acciones dentro del panel, barra abierta/cerrada, recarga del borrador, ventanas cortas y altas, móvil y desplazamiento de cuentas largas. Se ejecuta en `npm run test:browser`; `npm run test:preview:webkit` permite comprobar también WebKit. Para una instalación distinta de WebKit se puede indicar `MESAOS_WEBKIT_EXECUTABLE`.
+
+## Observaciones de preparación
+
+`tests/notes.test.cjs` cubre la identidad de selecciones con notas distintas, unión de cantidades al quitar una nota, límites y conservación de opciones/precios. `tests/notes-browser.test.cjs` comprueba el botón de escritura, edición/cancelación/eliminación, persistencia de notas en productos y extras, disposición móvil y que Cocina y Barra impriman las observaciones únicamente con sus productos. Ambas pruebas forman parte de los comandos habituales de pruebas.
