@@ -7,8 +7,8 @@
   <meta name="description" content="Plantilla maestra vacía MesaOS.">
   <title>MesaOS · Plantilla maestra</title>
   <script src="js/motion.js"></script>
-  <link rel="stylesheet" href="css/styles.css?v=20261020-mono1">
-  <link rel="stylesheet" href="css/pos-features.css?v=20261020-mono1">
+  <link rel="stylesheet" href="css/styles.css?v=20261024-harmony2">
+  <link rel="stylesheet" href="css/pos-features.css?v=20261024-compact-add1">
   <link rel="stylesheet" href="css/cash-print.css?v=20261020-mono1">
   <link rel="stylesheet" href="css/installation.css?v=20261020-orders1">
   <link rel="manifest" href="manifest.json">
@@ -16,7 +16,7 @@
   <script src="config/installation.js?v=20261020-mono1" defer></script>
   <script src="js/demo.js" defer></script>
   <script src="js/notice-particles.js?v=20261020-mono1" defer></script>
-  <script src="js/installation.js?v=20261020-mono1" defer></script>
+  <script src="js/installation.js?v=20261024-cleanup1" defer></script>
   <script src="js/orderCore.js" defer></script>
   <script src="js/orders.js" defer></script>
   <script src="js/history.js" defer></script>
@@ -25,23 +25,28 @@
   <script src="js/demo-session.js" defer></script>
   <script src="js/media.js" defer></script>
   <script src="js/order-effects.js" defer></script>
-  <script src="js/salesUI.js?v=20261020-orders1" defer></script>
-  <script src="js/cashUI.js" defer></script>
+  <script src="js/salesUI.js?v=20261024-harmony3" defer></script>
+  <script src="js/cashUI.js?v=20261024-harmony1" defer></script>
   <script src="js/menuSettings.js" defer></script>
   <script src="js/ticketSettings.js" defer></script>
   <script src="js/printing.js" defer></script>
-  <script src="js/app.js?v=20261020-orders1" defer></script>
+  <script src="js/app.js?v=20261024-cleanup2" defer></script>
 </head>
 <body>
   <section id="template-notice" hidden aria-label="Demostración interactiva"></section>
   <header class="topbar">
     <a class="brand" href="./" aria-label="MesaOS, inicio"><img id="restaurant-logo" src="assets/platform/mesaos-logo-transparent.png" alt="MesaOS" width="180" height="72"></a>
+    <button id="header-menu-toggle" class="header-menu-toggle" type="button" aria-label="Abrir menú de opciones" aria-controls="header-controls" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <div id="header-controls" class="header-controls">
     <div class="header-cash">
-      <p id="cash-status" role="status">Caja cerrada · Abre un turno para cobrar</p>
       <button id="history-button" class="header-history" type="button">Historial</button>
-      <details id="cash-options" class="options-dropdown">
-        <summary>Ver opciones de caja</summary>
+      <details id="cash-options" class="options-dropdown" data-open="false">
+        <summary>Opciones de caja</summary>
         <nav class="options-panel" aria-label="Control de caja">
+          <div id="cash-status" class="cash-menu-status" role="status">
+            <strong id="cash-state">Caja cerrada</strong>
+            <span id="cash-expected">Efectivo esperado: $0.00</span>
+          </div>
           <button id="cash-open-button" type="button">Abrir caja</button>
           <button id="cash-expense-button" type="button" disabled>Registrar gasto extra</button>
           <button id="cash-tips-button" type="button" disabled>Propinas y reparto</button>
@@ -61,42 +66,39 @@
         <button id="restart-app" type="button">Reiniciar aplicación</button>
       </nav>
     </details>
+    </div>
   </header>
 
   <main class="workspace">
     <div class="workspace-waves" aria-hidden="true"></div>
     <section class="catalog" aria-labelledby="catalog-title">
-      <div class="catalog-heading">
-        <h1 id="catalog-title">Menú</h1>
-      </div>
+      <h1 id="catalog-title" class="sr-only">Menú</h1>
       <div id="macro-tabs" class="macro-tabs" role="tablist" aria-label="Categorías del menú"></div>
       <section id="catalog-panel" role="tabpanel" aria-labelledby="tab-alimentos">
         <div class="filter-row"><div id="subcategory-chips" class="subcategory-chips" role="group" aria-label="Subcategorías"></div></div>
         <div class="catalog-toolbar">
-          <div><h2 id="section-title">Alimentos</h2><p id="product-count" class="muted" aria-live="polite"></p></div>
           <label class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg><span class="sr-only">Buscar en todo el menú</span><input id="product-search" type="search" placeholder="Buscar en todo el menú…" autocomplete="off" aria-describedby="global-search-note"></label>
+          <div class="grid-controls" role="group" aria-label="Productos por fila"><button id="grid-less" type="button" aria-label="Menos productos por fila" disabled>−</button><span id="grid-columns" role="status" aria-live="polite" aria-label="2 productos por fila">2</span><button id="grid-more" type="button" aria-label="Más productos por fila">+</button></div>
         </div>
         <p id="global-search-note" class="global-search-note" hidden>Resultados de todas las categorías. Borra la búsqueda para volver a los filtros.</p>
         <div id="product-grid" class="product-grid"></div>
         <div id="catalog-empty" class="catalog-empty" hidden><span aria-hidden="true">⌕</span><h3 id="catalog-empty-title">No encontramos productos</h3><p id="catalog-empty-note">Prueba con otro nombre.</p></div>
-        <p class="catalog-tip"><span aria-hidden="true">✧</span> Cada detalle cuenta. Los productos con opciones se personalizan antes de agregarlos.</p>
       </section>
     </section>
 
     <aside id="order-panel" class="order-panel" aria-labelledby="order-title">
-      <div class="order-heading"><div><p class="eyebrow">TU SELECCIÓN</p><h2 id="order-title" tabindex="-1">Pedido actual</h2></div><span id="order-count" class="count-badge">0</span></div>
+      <div class="order-heading"><h2 id="order-title" tabindex="-1">Pedido actual</h2><span id="order-count" class="count-badge">0</span></div>
       <div id="order-label-controls" class="order-label-controls">
-        <p id="label-presets-title" class="label-presets-title">Etiqueta del pedido <span class="muted">· opcional</span></p>
-        <div id="order-label-presets" class="label-presets" role="group" aria-labelledby="label-presets-title"></div>
-        <label class="order-label" for="order-label">Detalle personalizado <span class="muted">· opcional</span><input id="order-label" type="text" maxlength="60" placeholder="Nombre, dirección o detalle adicional" autocomplete="off"></label>
+        <div id="order-label-presets" class="label-presets" role="group" aria-label="Etiqueta del pedido"></div>
+        <input id="order-label" type="hidden" maxlength="60">
       </div>
       <div id="addition-notice" class="addition-notice" hidden><p id="addition-note"></p><button id="cancel-addition" type="button" class="text-button">Cancelar</button></div>
       <div id="order-items" class="order-items" aria-label="Productos del pedido"></div>
-      <div class="order-bottom"><div class="draft-actions"><button id="add-extra" class="secondary-button" type="button">Añadir Extra +</button><button id="clear-order" class="text-button" type="button" disabled>Vaciar pedido</button></div><div class="order-total"><span id="order-total-label">Total</span><strong id="order-total">$0.00</strong></div><p class="total-note">Incluye los extras seleccionados</p><button id="review-order" class="primary-button" type="button" disabled>Crear pedido <span aria-hidden="true">→</span></button><p class="local-note"><span class="status-dot" aria-hidden="true"></span><span id="storage-status">Expediente guardado en este navegador</span></p></div>
+      <div class="order-bottom"><div class="draft-actions"><button id="add-extra" class="secondary-button" type="button">Añadir Extra +</button><button id="clear-order" class="text-button" type="button" disabled>Vaciar pedido</button></div><div class="order-total"><span id="order-total-label">Total</span><strong id="order-total">$0.00</strong></div><button id="review-order" class="primary-button" type="button" disabled>Crear pedido <span aria-hidden="true">→</span></button><span id="storage-status" class="sr-only" role="status"></span></div>
     </aside>
   </main>
-  <button id="mobile-order-link" class="mobile-order-link" type="button" aria-controls="order-panel" hidden><span>Ver pedido <span id="mobile-order-count" class="mobile-count"></span></span><strong id="mobile-order-total"></strong><span aria-hidden="true">↓</span></button>
-  <footer class="page-footer"><span id="restaurant-tagline"></span><span id="currency-note">Precios en MXN</span><span class="platform-credit"><img src="assets/platform/mesaos-logo-transparent.png" alt="MesaOS" width="90" height="46"></span></footer>
+  <button id="mobile-order-link" class="mobile-order-link" type="button" aria-controls="mobile-order-dialog" aria-haspopup="dialog" aria-expanded="false" aria-label="Ver pedido"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h3l3 12h11l3-9H6M9 20h.01M18 20h.01"/></svg><span id="mobile-order-count" class="mobile-count">0</span><strong id="mobile-order-total" class="sr-only"></strong></button>
+  <dialog id="mobile-order-dialog" class="order-drawer" aria-labelledby="order-title"><button id="close-order-drawer" class="close-button drawer-close" type="button" aria-label="Volver al menú">×</button></dialog>
 
   <dialog id="line-note-dialog" class="modal small-modal" aria-labelledby="line-note-title" aria-describedby="line-note-help">
     <form id="line-note-form">
@@ -137,7 +139,7 @@
   </dialog>
 
   <dialog id="history-dialog" class="modal history-modal" aria-labelledby="history-title">
-    <div class="modal-heading"><div><p class="eyebrow">VENTAS DEL RESTAURANTE</p><h2 id="history-title">Historial de pedidos</h2></div><button type="button" class="close-button" data-close aria-label="Cerrar historial">×</button></div>
+    <div class="modal-heading"><div><h2 id="history-title">Historial de pedidos</h2></div><button type="button" class="close-button" data-close aria-label="Cerrar historial">×</button></div>
     <button id="history-cuts-button" type="button" class="text-button">Ver historial de cortes de caja →</button>
     <div id="history-layout" class="history-layout"><aside class="history-sidebar" aria-labelledby="history-days-title"><h3 id="history-days-title">Días registrados</h3><div id="history-days" class="history-days" role="group" aria-labelledby="history-days-title"></div></aside>
       <section id="history-detail" class="history-detail" aria-labelledby="history-day-title" tabindex="0"><p class="eyebrow">CORTE DEL DÍA</p><h3 id="history-day-title" aria-live="polite"></h3><p class="history-note">Ventas por fecha de pago de cada producto, en horario de Mérida.</p><div id="history-summary" class="history-summary"></div><div id="history-category-kpis" class="history-category-kpis"></div><p id="history-extra-note" class="history-note"></p><div class="history-orders-heading"><h3>Pedidos del día</h3><span id="history-order-count"></span></div><div id="history-orders" class="history-orders"></div></section>

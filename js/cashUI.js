@@ -185,8 +185,9 @@ globalThis.AmorCashUI = (() => {
     function renderAll() {
       const { caja, pedidos } = getState();
       const resumen = AmorCash.resumirCaja(caja, pedidos);
-      $('cash-status').textContent = caja.abierta ? `Caja abierta · Efectivo esperado ${moneda(resumen.efectivoEsperadoCentavos)}` : 'Caja cerrada · Abre un turno para cobrar';
-      $('cash-status').dataset.open = String(caja.abierta);
+      $('cash-state').textContent = caja.abierta ? 'Caja abierta' : 'Caja cerrada';
+      $('cash-expected').textContent = `Efectivo esperado: ${moneda(resumen.efectivoEsperadoCentavos)}`;
+      $('cash-options').dataset.open = String(caja.abierta);
       $('cash-open-button').disabled = caja.abierta;
       $('cash-expense-button').disabled = !caja.abierta;
       $('cash-close-button').disabled = !caja.abierta;

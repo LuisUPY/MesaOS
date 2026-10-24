@@ -5,6 +5,9 @@
   const categoriasCocina = new Set(['entradas', 'alimentos', 'postres']);
   const normalizar = valor => String(valor || '').trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   let impresionActiva = null;
+  const nombreTicket = () => globalThis.MesaInstallation?.demo
+    ? 'EL NOMBRE DE TU NEGOCIO AQUÍ'
+    : globalThis.MesaInstallation?.restaurant.name || 'AMOR & AMOR';
 
   function separarComandas(pedido) {
     if (!pedido || !Array.isArray(pedido.partidas) || !pedido.partidas.length) {
@@ -67,7 +70,7 @@
     ticket.dataset.area = area;
     const cabecera = elemento('header', 'comanda-cabecera');
     cabecera.append(
-      elemento('h2', 'comanda-restaurante', globalThis.MesaInstallation?.restaurant.name || 'AMOR & AMOR'),
+      elemento('h2', 'comanda-restaurante', nombreTicket()),
       elemento('p', 'comanda-fecha', fechaHora),
       elemento('p', 'comanda-numero', `Pedido #${pedido.numero}`),
       elemento('h3', 'comanda-area', `--- ${area} ---`)
@@ -96,7 +99,7 @@
     const ticket = elemento('section', 'comanda-ticket cuenta-ticket');
     ticket.dataset.area = 'CUENTA';
     const cabecera = elemento('header', 'comanda-cabecera');
-    cabecera.append(elemento('h3', '', globalThis.MesaInstallation?.restaurant.name || 'AMOR & AMOR'), elemento('h2', 'comanda-area', 'CUENTA'),
+    cabecera.append(elemento('h3', '', nombreTicket()), elemento('h2', 'comanda-area', 'CUENTA'),
       elemento('p', 'comanda-etiqueta', pedido.etiqueta || 'Sin etiqueta'),
       elemento('p', '', `Pedido #${pedido.numero}`), elemento('p', '', fechaHora));
     for (const text of [globalThis.MesaInstallation?.ticket.header, globalThis.MesaInstallation?.restaurant.address, globalThis.MesaInstallation?.restaurant.phone].filter(Boolean)) cabecera.append(elemento('p','',text));
@@ -176,7 +179,7 @@
     const ticket = elemento('section', 'comanda-ticket corte-ticket');
     ticket.dataset.area = 'CORTE';
     const cabecera = elemento('header', 'comanda-cabecera');
-    cabecera.append(elemento('h2', '', globalThis.MesaInstallation?.restaurant.name || 'AMOR & AMOR'), elemento('h3', 'comanda-area', 'CORTE DE CAJA'),
+    cabecera.append(elemento('h2', '', nombreTicket()), elemento('h3', 'comanda-area', 'CORTE DE CAJA'),
       elemento('p', '', `Apertura: ${fechaImpresion(corte.abiertoEn)}`),
       elemento('p', '', `${provisional ? 'Vista previa' : 'Cierre'}: ${fechaImpresion(corte.cerradoEn)}`));
     ticket.append(cabecera, elemento('p', 'corte-ayuda', provisional ? `VISTA PREVIA · Turno abierto. Importes en ${globalThis.MesaInstallation?.restaurant.currency || 'MXN'}.` : `Importes en ${globalThis.MesaInstallation?.restaurant.currency || 'MXN'}. Turno cerrado.`));

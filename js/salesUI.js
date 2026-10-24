@@ -239,8 +239,11 @@ globalThis.AmorSalesUI = (() => {
         const card = node('article', 'history-order');
         const open = button('', 'history-order-open', () => abrirPedido(pedido.id));
         const title = node('span', 'history-order-heading');
-        title.append(node('span', 'text-button', `Pedido N° ${pedido.numero} ↗`), node('span', 'status-badge', pedido.estado), node('strong', '', dinero(pedido.totalCentavos / 100)));
-        open.append(title, node('span', 'history-order-label', pedido.etiqueta || 'Sin etiqueta'));
+        const statusClass = { ABIERTO: 'open', PAGADO: 'paid', PREPARADO: 'prepared' }[pedido.estado] || '';
+        title.append(node('span', 'history-order-label', pedido.etiqueta || 'Sin etiqueta'), node('strong', '', dinero(pedido.totalCentavos / 100)));
+        const meta = node('span', 'history-order-meta');
+        meta.append(node('span', 'history-order-number', `N°${pedido.numero}`), node('span', `status-badge ${statusClass}`, pedido.estado));
+        open.append(title, meta);
         card.append(open);
         const cobrado = pedido.partidas.filter(p => p.pagado && fechaLocal(p.pagadoEn) === selected.fecha).reduce((sum, p) => sum + AmorPOS.importePartida(p), 0);
         open.append(node('span', 'history-order-note', `Pagado en este día: ${dinero(cobrado / 100)} · Ver detalle y reimpresiones`));

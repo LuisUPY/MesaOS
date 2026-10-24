@@ -40,6 +40,18 @@
     return node;
   }
   let toastTimer;
+  let gridColumns = 2;
+  function updateGridColumns(amount) {
+    gridColumns = Math.max(2, Math.min(5, gridColumns + amount));
+    $('product-grid').style.setProperty('--product-columns', gridColumns);
+    $('product-grid').dataset.columns = String(gridColumns);
+    $('grid-columns').textContent = gridColumns;
+    $('grid-columns').setAttribute('aria-label', `${gridColumns} productos por fila`);
+    $('grid-less').disabled = gridColumns === 2;
+    $('grid-more').disabled = gridColumns === 5;
+  }
+  $('grid-less').addEventListener('click', () => updateGridColumns(-1));
+  $('grid-more').addEventListener('click', () => updateGridColumns(1));
   function notify(text) {
     $('toast').textContent = text;
     $('toast').hidden = false;
@@ -64,7 +76,7 @@
     for (const preset of $('order-label-presets').children) {
       const etiqueta = preset.dataset.etiqueta;
       preset.setAttribute('aria-pressed', String(etiqueta === state.preajuste));
-      preset.textContent = etiqueta === 'Delivery' ? delivery : etiqueta || 'Personalizado';
+      preset.textContent = etiqueta === 'Delivery' ? delivery : etiqueta;
       const ocupado = etiqueta.startsWith('Mesa ') ? AmorOrders.pedidoConEtiqueta(expediente.pedidos, etiqueta) : null;
       preset.disabled = !!ocupado;
       const descripcion = ocupado ? `${etiqueta} está ocupada por el pedido N° ${ocupado.numero}. Ábrelo en Pedidos abiertos para añadir productos.` : '';
@@ -76,15 +88,15 @@
     $('order-label').maxLength = etiqueta ? 60 - etiqueta.length - 3 : 60;
   }
   function renderPreajustes() {
-    $('order-label-presets').replaceChildren(...[...Array.from({ length: 8 }, (_, i) => `Mesa ${i + 1}`), 'Delivery', ''].map(etiqueta => {
-      const preset = button(etiqueta || 'Personalizado', 'label-preset', () => {
+    $('order-label-presets').replaceChildren(...[...Array.from({ length: 8 }, (_, i) => `Mesa ${i + 1}`), 'Delivery'].map(etiqueta => {
+      const preset = button(etiqueta, 'label-preset', () => {
         state.preajuste = etiqueta;
         actualizarPreajustes();
         $('order-label').value = $('order-label').value.slice(0, $('order-label').maxLength);
         saveDraft();
       });
       preset.dataset.etiqueta = etiqueta;
-      preset.setAttribute('aria-label', etiqueta || 'Personalizado');
+      preset.setAttribute('aria-label', etiqueta);
       return preset;
     }));
     actualizarPreajustes();
@@ -201,8 +213,6 @@
       producto.macroCategoria === state.macro && (state.subcategoria === 'todos' || producto.subCategoria === state.subcategoria));
     document.querySelector('.catalog').classList.toggle('searching', !!query);
     $('global-search-note').hidden = !query;
-    $('section-title').textContent = query ? 'Resultados en todo el menú' : state.subcategoria === 'todos' ? state.macro || 'Menú sin configurar' : state.subcategoria;
-    $('product-count').textContent = `${products.length} ${products.length === 1 ? 'producto' : 'productos'} en el menú`;
     $('catalog-empty').hidden = products.length > 0;
     $('catalog-empty-title').textContent = query ? 'No encontramos productos' : state.macro ? 'Esta categoría aún no tiene productos' : 'Menú sin configurar';
     $('catalog-empty-note').textContent = query ? 'Prueba con otro nombre.' : state.macro ? 'Selecciona otra categoría para continuar.' : 'El proveedor prepara esta plantilla antes de entregarla al restaurante.';
@@ -224,38 +234,7 @@
         preview.append(image);
         card.append(preview);
       }
-      const top = element('div', 'card-top');
-      const symbol = element('span', 'product-symbol');
-      symbol.append(icon(producto.macroCategoria));
-      top.append(symbol, element('span', 'category-label', query ? `${producto.macroCategoria} · ${producto.subCategoria}` : producto.subCategoria));
-      card.append(top, element('h3', '', producto.nombre));
-      if (producto.descripcion || producto.opciones.length) {
-        const details = element('div', 'product-details');
-        details.id = `product-details-${producto.id}`;
-        details.hidden = true;
-        const marker = element('span', 'details-marker', '+');
-        marker.setAttribute('aria-hidden', 'true');
-        const label = element('span', '', 'Detalles');
-        const toggle = button('', 'product-details-toggle', () => {
-          const expanded = toggle.getAttribute('aria-expanded') !== 'true';
-          toggle.setAttribute('aria-expanded', String(expanded));
-          toggle.setAttribute('aria-label', `${expanded ? 'Ocultar' : 'Mostrar'} detalles de ${producto.nombre}`);
-          marker.textContent = expanded ? '−' : '+';
-          label.textContent = expanded ? 'Ocultar detalles' : 'Detalles';
-          details.hidden = !expanded;
-        });
-        toggle.append(marker, label);
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.setAttribute('aria-controls', details.id);
-        toggle.setAttribute('aria-label', `Mostrar detalles de ${producto.nombre}`);
-        if (producto.descripcion) details.append(element('p', 'product-description', producto.descripcion));
-        if (producto.opciones.length) {
-          const badge = element('span', 'options-badge');
-          badge.append(icon('options'), document.createTextNode('Opciones disponibles'));
-          details.append(badge);
-        }
-        card.append(toggle, details);
-      }
+      card.append(element('h3', '', producto.nombre));
       const bottom = element('div', 'card-bottom');
       const price = element('span', 'product-price', placeholder ? 'Sin precio' : pending ? 'Precio pendiente' : dinero(producto.precio));
       if (!pending) price.append(element('small', '', globalThis.MesaInstallation?.restaurant.currency || 'MXN'));
@@ -411,7 +390,7 @@
     const total = dinero(totalPedido(state.partidas) / 100);
     $('order-count').textContent = cantidad;
     $('order-total').textContent = total;
-    $('mobile-order-link').hidden = !cantidad;
+    $('mobile-order-link').setAttribute('aria-label', `Ver pedido: ${cantidad} productos, ${total}`);
     $('mobile-order-count').textContent = cantidad;
     $('mobile-order-total').textContent = total;
     $('clear-order').disabled = !state.partidas.length;
@@ -476,10 +455,30 @@
       $('extra-error').textContent = error.message; $('extra-error').hidden = false;
     }
   });
-  $('mobile-order-link').addEventListener('click', () => {
-    $('order-panel').scrollIntoView({ behavior: 'auto', block: 'start' });
+  const drawer = $('mobile-order-dialog');
+  const narrowScreen = matchMedia('(max-width: 700px)');
+  function syncOrderDrawer() {
+    if (drawer.open) drawer.close();
+    if (narrowScreen.matches) drawer.append($('order-panel'));
+    else document.querySelector('.workspace').append($('order-panel'));
+  }
+  function showOrderPanel() {
+    if (narrowScreen.matches) {
+      if (!drawer.open) drawer.showModal();
+      $('mobile-order-link').setAttribute('aria-expanded', 'true');
+    } else $('order-panel').scrollIntoView({ behavior: 'auto', block: 'start' });
     $('order-title').focus({ preventScroll: true });
+  }
+  narrowScreen.addEventListener('change', syncOrderDrawer);
+  syncOrderDrawer();
+  $('mobile-order-link').addEventListener('click', showOrderPanel);
+  $('close-order-drawer').addEventListener('click', () => drawer.close());
+  drawer.addEventListener('click', event => {
+    if (event.target !== drawer) return;
+    const bounds = drawer.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) drawer.close();
   });
+  drawer.addEventListener('close', () => $('mobile-order-link').setAttribute('aria-expanded', 'false'));
   $('clear-order').addEventListener('click', () => $('clear-dialog').showModal());
   $('confirm-clear').addEventListener('click', () => {
     const next = currentState();
@@ -498,8 +497,7 @@
     if (!commit(next)) return;
     $('ticket-dialog').close();
     $('history-dialog').close();
-    $('order-panel').scrollIntoView({ behavior: 'auto', block: 'start' });
-    $('order-title').focus({ preventScroll: true });
+    showOrderPanel();
     notify(`Selecciona productos para ${pedido.etiqueta || `pedido N° ${pedido.numero}`}`);
   }
   function cancelarAdicion() {
@@ -570,6 +568,28 @@
   $('save-expediente').addEventListener('click', globalThis.guardarExpediente);
   $('restart-app').addEventListener('click', () => { if (saveDraft()) window.location.reload(); });
   const menus = [...document.querySelectorAll('.options-dropdown')];
+  const headerToggle = $('header-menu-toggle');
+  const headerControls = $('header-controls');
+  function closeHeaderMenu() {
+    headerToggle.setAttribute('aria-expanded', 'false');
+    for (const menu of menus) menu.open = false;
+  }
+  headerToggle.addEventListener('click', () => {
+    const expanded = headerToggle.getAttribute('aria-expanded') === 'true';
+    if (expanded) closeHeaderMenu();
+    else headerToggle.setAttribute('aria-expanded', 'true');
+  });
+  headerControls.addEventListener('click', event => {
+    if (event.target.closest('button:not(:disabled), a')) closeHeaderMenu();
+  });
+  document.addEventListener('click', event => {
+    if (!headerControls.contains(event.target) && !headerToggle.contains(event.target)) closeHeaderMenu();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && headerToggle.getAttribute('aria-expanded') === 'true') {
+      closeHeaderMenu(); headerToggle.focus();
+    }
+  });
   for (const menu of menus) {
     menu.addEventListener('toggle', () => { if (menu.open) for (const other of menus) if (other !== menu) other.open = false; });
     menu.querySelector('nav').addEventListener('click', event => { if (event.target.closest('button:not(:disabled), a')) menu.open = false; });
@@ -595,5 +615,8 @@
   salesUI.renderAll();
   cashUI.renderAll();
   if (!expediente.caja.abierta && globalThis.MesaInstallation?.ready !== false) cashUI.ofrecerApertura();
-  if (globalThis.MesaInstallation?.ready === false) $('cash-status').textContent = 'Plantilla sin restaurante asignado';
+  if (globalThis.MesaInstallation?.ready === false) {
+    $('cash-state').textContent = 'Caja no disponible';
+    $('cash-expected').textContent = 'Plantilla sin restaurante asignado';
+  }
 })();

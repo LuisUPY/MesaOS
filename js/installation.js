@@ -26,14 +26,13 @@
   $('restaurant-logo').src=r.logo||'assets/platform/mesaos-logo-transparent.png';$('restaurant-logo').alt=name;
   document.querySelector('.brand').setAttribute('aria-label',`${name}, inicio`);
   $('catalog-title').textContent='Menú';
-  $('restaurant-tagline').textContent=r.tagline;
-  $('currency-note').textContent=`Precios en ${r.currency}`;
   $('restaurant-menu').hidden=!config.ticket.menuPdf;$('restaurant-menu').href=config.ticket.menuPdf||'#';
   document.querySelector('.history-note').textContent=`Ventas por fecha de pago de cada producto, zona ${r.timezone}.`;
   $('template-notice').hidden=config.ready;
   if(!config.ready){
     for(const e of document.querySelectorAll('.header-cash,.order-panel,.app-options,#open-orders-bar'))e.inert=true;
-    $('cash-status').textContent='Plantilla sin restaurante asignado';
+    $('cash-state').textContent='Caja no disponible';
+    $('cash-expected').textContent='Plantilla sin restaurante asignado';
     $('catalog-empty-title').textContent='Menú sin configurar';
     $('catalog-empty-note').textContent='Esta plantilla se adapta por el proveedor antes de entregarse al restaurante.';
   }

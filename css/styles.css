@@ -25,7 +25,7 @@ body {
   margin:0
 }
 
-button,input,textarea {
+button,input,textarea,select {
   font:inherit
 }
 
@@ -183,8 +183,8 @@ svg {
 }
 
 .catalog-heading h1 {
-  font-family:Georgia,"Times New Roman",serif;
-  font-weight:400;
+  font-family:inherit;
+  font-weight:700;
   font-size:clamp(27px,2.6vw,39px);
   letter-spacing:-1.5px;
   line-height:1.2;
@@ -230,7 +230,7 @@ svg {
   right:0;
   font-size:10px;
   font-style:italic;
-  font-family:Georgia,serif;
+  font-family:inherit;
   color:#737373;
   transform:rotate(-7deg)
 }
@@ -396,8 +396,8 @@ svg {
 }
 
 .product-preview {
-  height:150px;
-  margin-bottom:14px;
+  height:clamp(110px, 14vw, 150px);
+  margin-bottom:12px;
   border-radius:9px;
   background:#f6f5f2;
   overflow:hidden;
@@ -483,9 +483,9 @@ svg {
 }
 
 .product-card h3 {
-  font-size:14px;
+  font-size:17px;
   line-height:1.45;
-  font-weight:600;
+  font-weight:700;
   letter-spacing:-.2px;
   margin-bottom:6px
 }
@@ -520,12 +520,12 @@ svg {
   align-items:center;
   justify-content:space-between;
   margin-top:auto;
-  padding-top:13px;
+  padding-top:6px;
   gap:10px
 }
 
 .product-price {
-  font-weight:600;
+  font-weight:400;
   font-size:17px;
   letter-spacing:-.5px;
   font-variant-numeric:tabular-nums
@@ -636,11 +636,10 @@ svg {
 }
 
 .order-heading h2 {
-  font-family:Georgia,serif;
+  font-family:inherit;
   font-size:25px;
-  font-weight:400;
-  letter-spacing:-.8px;
-  margin-top:7px
+  font-weight:700;
+  letter-spacing:0
 }
 
 .count-badge {
@@ -904,7 +903,8 @@ svg {
 }
 
 #restaurant-tagline {
-  font-family:Georgia,serif;
+  font-family:inherit;
+  font-weight:700;
   font-size:12px;
   color:#828282
 }
@@ -939,10 +939,10 @@ svg {
 }
 
 .modal-heading h2 {
-  font-family:Georgia,serif;
+  font-family:inherit;
   font-size:27px;
   letter-spacing:-.8px;
-  font-weight:400;
+  font-weight:700;
   margin-top:6px
 }
 
@@ -1348,7 +1348,7 @@ svg {
     min-height:219px
   }
   .product-card h3 {
-    font-size:13px
+    font-size:16px
   }
   .category-label {
     font-size:7px;
