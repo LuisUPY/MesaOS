@@ -7,11 +7,9 @@ globalThis.AmorCashUI = (() => {
   const campos = [
     ['fondoInicialCentavos', 'Fondo Inicial', ''],
     ['ventasEfectivoCentavos', '(+) Ventas en Efectivo', ''],
-    ['propinasEfectivoCentavos', '(+) Propinas en Efectivo', ''],
     ['gastosExtrasCentavos', '(-) Gastos Extras', ''],
     ['efectivoEsperadoCentavos', '(=) Efectivo Esperado en Caja', 'expected'],
     ['ventasTarjetaCentavos', 'Ventas en Tarjeta/Transferencia', ''],
-    ['propinasTarjetaCentavos', 'Propinas en Tarjeta/Transferencia', ''],
     ['totalVentasCentavos', 'Total General de Ventas (Efectivo + Tarjeta)', 'sales'],
     ['totalPropinasCentavos', 'Total de Propinas', 'tips']
   ];
@@ -42,29 +40,10 @@ globalThis.AmorCashUI = (() => {
     }));
     if (!gastos.length) container.append(node('li', '', 'Sin gastos registrados.'));
   }
-  function listaReparto(reparto) {
-    return reparto.map(persona => {
-      const row = node('li');
-      row.append(node('span', '', `${persona.nombre}${persona.porcentaje != null ? ` · ${persona.porcentaje}%` : ''}`), node('strong', '', moneda(persona.montoCentavos)));
-      return row;
-    });
-  }
-  function repartoEn(container, caja) {
-    const propinas = AmorCash.resumirPropinas(caja);
-    container.replaceChildren(node('h3', '', 'Reparto de propinas'));
-    if (!propinas.configurado) {
-      container.append(node('p', 'group-help', 'Reparto sin configurar.'));
-      return;
-    }
-    container.append(node('p', 'group-help', caja.repartoPropinas.tipo === 'igual' ? `Partes iguales entre ${propinas.reparto.length} personas` : `Por porcentaje entre ${propinas.reparto.length} personas`));
-    const lista = node('ul', 'tips-split-list'); lista.append(...listaReparto(propinas.reparto));
-    container.append(lista);
-  }
   function iniciar({ getState, commit, notify }) {
     let pendingPayment = null;
     let expenseShiftId = null;
     let closeShiftId = null;
-    let dailyTipEdited = false;
     let tipsShiftId = null;
 
     function importesPago() {
@@ -131,20 +110,16 @@ globalThis.AmorCashUI = (() => {
         else mostrarPago();
       } catch (error) { pendingPayment = null; notify(error.message); }
     }
-    function cajaParaCorte(fecha = new Date().toISOString()) {
+    function cajaParaCorte() {
       const { caja } = getState();
       if (!caja.abierta || caja.turnoId !== closeShiftId) throw new Error('El turno cambió. Vuelve a abrir su corte.');
-      const input = $('cash-daily-tip');
-      if (input.validity.badInput || input.value === '') throw new Error('Captura la Propina del Día; usa 0 si no hubo propinas.');
-      return AmorCash.completarPropinaDelDia(caja, input.value, fecha);
+      return caja;
     }
     function renderCorte() {
       const { caja, pedidos } = getState();
       const disponible = caja.abierta && caja.turnoId === closeShiftId;
       $('close-shift').disabled = !disponible;
       $('print-current-cut').disabled = !disponible;
-      $('cash-daily-tip').disabled = !disponible;
-      if (!dailyTipEdited) $('cash-daily-tip').value = (AmorCash.resumirPropinas(caja).totalCentavos / 100).toFixed(2);
       $('cash-close-note').textContent = caja.abierta ? `Turno abierto el ${horario.format(new Date(caja.abiertoEn))}. Importes en ${globalThis.MesaInstallation?.restaurant.currency || 'MXN'}.` : 'La caja está cerrada.';
       let prevista = caja;
       try {
@@ -158,7 +133,6 @@ globalThis.AmorCashUI = (() => {
       resumenEn($('cash-summary'), AmorCash.resumirCaja(prevista, pedidos));
       $('cash-expenses-title').textContent = `Conceptos de gastos (${caja.gastosDelDia.length})`;
       gastosEn($('cash-expenses-list'), caja.gastosDelDia);
-      repartoEn($('cash-close-tips'), prevista);
     }
     function renderHistorial() {
       const cortes = [...getState().historialCortes].reverse();
@@ -173,11 +147,10 @@ globalThis.AmorCashUI = (() => {
         const gastos = node('details', 'cash-expenses');
         const list = node('ul'); gastosEn(list, corte.gastosDelDia);
         gastos.append(node('summary', '', `Gastos (${corte.gastosDelDia.length})`), list);
-        const propinas = node('section', 'cash-cut-tips'); repartoEn(propinas, corte);
         const print = node('button', 'secondary-button print-cut-button', 'Reimprimir Corte');
         print.type = 'button'; print.dataset.corte = corte.id;
         print.addEventListener('click', () => AmorPrinting.imprimirCorte(corte).catch(error => notify(`No se abrió la impresión: ${error.message}`)));
-        detail.append(heading, period, summary, gastos, propinas);
+        detail.append(heading, period, summary, gastos);
         card.append(detail, print);
         return card;
       }));
@@ -191,94 +164,16 @@ globalThis.AmorCashUI = (() => {
       $('cash-open-button').disabled = caja.abierta;
       $('cash-expense-button').disabled = !caja.abierta;
       $('cash-close-button').disabled = !caja.abierta;
-      $('cash-tips-button').disabled = !caja.abierta;
+      if (tipsShiftId !== caja.turnoId) {
+        tipsShiftId = caja.turnoId;
+        $('cash-tip-amount').value = '';
+        $('cash-tip-error').hidden = true;
+      }
+      $('cash-tip-amount').disabled = !caja.abierta;
+      $('cash-tip-add').disabled = !caja.abierta;
+      $('tips-total').textContent = moneda(resumen.totalPropinasCentavos);
       if ($('cash-close-dialog').open) renderCorte();
       if ($('cash-history-dialog').open) renderHistorial();
-      if ($('cash-tips-dialog').open) renderPropinas();
-    }
-
-    function numeroPersonas() {
-      const texto = $('tips-people-count').value;
-      const cantidad = Number(texto);
-      if (!/^\d+$/.test(texto) || !Number.isInteger(cantidad) || cantidad < 1 || cantidad > 50) throw new Error('Elige entre 1 y 50 personas.');
-      return cantidad;
-    }
-    function filasPorcentaje(personas = []) {
-      const container = $('tips-percentages');
-      container.hidden = $('tips-split-type').value !== 'porcentaje';
-      if (container.hidden) return;
-      let cantidad;
-      try { cantidad = numeroPersonas(); }
-      catch { container.replaceChildren(); return; }
-      container.replaceChildren(...Array.from({ length: cantidad }, (_, index) => {
-        const row = node('div', 'tips-person-row');
-        const nombre = node('input'); nombre.type = 'text'; nombre.maxLength = 60; nombre.placeholder = `Persona ${index + 1}`;
-        nombre.setAttribute('aria-label', `Nombre de persona ${index + 1}`);
-        nombre.value = personas[index]?.nombre || '';
-        const etiqueta = node('label', 'tips-percent-field', '%');
-        const porcentaje = node('input'); porcentaje.type = 'number'; porcentaje.min = '0'; porcentaje.max = '100'; porcentaje.step = '0.01';
-        porcentaje.setAttribute('aria-label', `Porcentaje de persona ${index + 1}`);
-        const puntos = Math.floor(10000 / cantidad) + (index < 10000 % cantidad ? 1 : 0);
-        porcentaje.value = personas[index]?.porcentaje ?? puntos / 100;
-        etiqueta.prepend(porcentaje); row.append(nombre, etiqueta);
-        return row;
-      }));
-    }
-    function leerReparto() {
-      const cantidad = numeroPersonas();
-      if ($('tips-split-type').value === 'igual') return { tipo: 'igual', personas: cantidad };
-      return { tipo: 'porcentaje', personas: [...$('tips-percentages').children].map((row, index) => {
-        const [nombre, porcentaje] = row.querySelectorAll('input');
-        if (porcentaje.validity.badInput || porcentaje.value === '') throw new Error('Captura el porcentaje de cada persona.');
-        return { nombre: nombre.value.trim() || `Persona ${index + 1}`, porcentaje: Number(porcentaje.value) };
-      }) };
-    }
-    function actualizarVistaReparto() {
-      const status = $('tips-split-status');
-      $('tips-save-split').disabled = true;
-      try {
-        const caja = getState().caja;
-        if (!caja.abierta || caja.turnoId !== tipsShiftId) throw new Error('El turno cambió. Cierra esta ventana y vuelve a abrir las propinas.');
-        const configurada = AmorCash.configurarRepartoPropinas(caja, leerReparto());
-        const resumen = AmorCash.resumirPropinas(configurada);
-        $('tips-split-preview').replaceChildren(...listaReparto(resumen.reparto));
-        status.textContent = 'Vista previa del reparto · Guarda para incluirlo en el corte.';
-        status.dataset.state = 'valid';
-        $('tips-save-split').disabled = false;
-      } catch (error) {
-        $('tips-split-preview').replaceChildren();
-        status.textContent = error.message;
-        status.dataset.state = 'invalid';
-      }
-    }
-    function renderPropinas() {
-      const { caja } = getState();
-      const propinas = AmorCash.resumirPropinas(caja);
-      $('tips-total').textContent = moneda(propinas.totalCentavos);
-      $('tips-methods').textContent = `Efectivo ${moneda(propinas.efectivoCentavos)} · Tarjeta/transferencia ${moneda(propinas.tarjetaCentavos)}`;
-      const registros = caja.propinas || [];
-      $('tips-records-title').textContent = `Propinas registradas (${registros.length})`;
-      $('tips-records-list').replaceChildren(...registros.map(propina => {
-        const row = node('li');
-        row.append(node('span', '', `${propina.metodo === 'efectivo' ? 'Efectivo' : 'Tarjeta/transferencia'} · ${horario.format(new Date(propina.fecha))}`), node('strong', '', moneda(propina.montoCentavos)));
-        return row;
-      }));
-      if (!registros.length) $('tips-records-list').append(node('li', '', 'Aún no hay propinas registradas.'));
-      $('cash-tip-form').querySelector('button[type="submit"]').disabled = !caja.abierta || caja.turnoId !== tipsShiftId;
-      actualizarVistaReparto();
-    }
-    function mostrarPropinas() {
-      const { caja } = getState();
-      if (!caja.abierta) { notify('Abre la caja antes de registrar propinas.'); return; }
-      tipsShiftId = caja.turnoId;
-      $('cash-tip-form').reset(); $('tips-split-form').reset();
-      $('cash-tip-error').hidden = true; $('tips-split-error').hidden = true;
-      const config = caja.repartoPropinas;
-      $('tips-split-type').value = config?.tipo || 'igual';
-      $('tips-people-count').value = config ? config.tipo === 'igual' ? config.personas : config.personas.length : 2;
-      filasPorcentaje(config?.tipo === 'porcentaje' ? config.personas : []);
-      renderPropinas();
-      if (!$('cash-tips-dialog').open) $('cash-tips-dialog').showModal();
     }
 
     $('cash-open-button').addEventListener('click', () => { pendingPayment = null; mostrarApertura(); });
@@ -335,47 +230,24 @@ globalThis.AmorCashUI = (() => {
         $('cash-expense-dialog').close(); notify('Gasto de efectivo guardado');
       } catch (error) { mostrarError('cash-expense-error', error.message); }
     });
-    $('cash-tips-button').addEventListener('click', mostrarPropinas);
-    $('cash-close-edit-tips').addEventListener('click', mostrarPropinas);
     $('cash-tip-form').addEventListener('submit', event => {
       event.preventDefault();
       try {
         const next = getState();
-        if (next.caja.turnoId !== tipsShiftId) throw new Error('El turno cambió. Cierra esta ventana y vuelve a registrar la propina.');
-        next.caja = AmorCash.registrarPropina(next.caja, $('cash-tip-amount').value, $('cash-tip-method').value);
+        if (!next.caja.abierta) throw new Error('Abre la caja antes de añadir propinas.');
+        next.caja = AmorCash.registrarPropina(next.caja, $('cash-tip-amount').value, 'separado');
         if (!commit(next)) throw new Error('No se guardó la propina. Intenta de nuevo.');
-        $('cash-tip-amount').value = ''; $('cash-tip-error').hidden = true;
-        notify('Propina guardada');
+        $('cash-tip-amount').value = '';
+        $('cash-tip-error').hidden = true;
+        notify('Propina añadida');
       } catch (error) { mostrarError('cash-tip-error', error.message); }
-    });
-    $('tips-split-type').addEventListener('change', () => { filasPorcentaje(); actualizarVistaReparto(); });
-    $('tips-people-count').addEventListener('input', () => {
-      const personas = [...$('tips-percentages').children].map(row => {
-        const [nombre, porcentaje] = row.querySelectorAll('input'); return { nombre: nombre.value, porcentaje: porcentaje.value };
-      });
-      filasPorcentaje(personas); actualizarVistaReparto();
-    });
-    $('tips-split-form').addEventListener('input', () => { $('tips-split-error').hidden = true; actualizarVistaReparto(); });
-    $('tips-split-form').addEventListener('submit', event => {
-      event.preventDefault();
-      try {
-        const next = getState();
-        if (next.caja.turnoId !== tipsShiftId) throw new Error('El turno cambió. Cierra esta ventana y vuelve a configurar el reparto.');
-        next.caja = AmorCash.configurarRepartoPropinas(next.caja, leerReparto());
-        if (!commit(next)) throw new Error('No se guardó el reparto. Intenta de nuevo.');
-        $('tips-split-error').hidden = true;
-        $('tips-split-status').textContent = 'Reparto guardado. Se incluirá en el corte.';
-        notify('Reparto de propinas guardado');
-      } catch (error) { mostrarError('tips-split-error', error.message); }
     });
     $('cash-close-button').addEventListener('click', () => {
       const { caja } = getState();
       if (!caja.abierta) { notify('La caja está cerrada.'); return; }
       closeShiftId = caja.turnoId; $('cash-close-error').hidden = true;
-      dailyTipEdited = false;
       renderCorte(); $('cash-close-dialog').showModal();
     });
-    $('cash-daily-tip').addEventListener('input', () => { dailyTipEdited = true; renderCorte(); });
     $('print-current-cut').addEventListener('click', () => {
       try {
         const fecha = new Date().toISOString();

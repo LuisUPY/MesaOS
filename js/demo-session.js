@@ -21,8 +21,7 @@
     const payment = AmorCash.cobrarPartidas(today, 'todos', state.caja, 'tarjeta', at(40));
     state.pedidos.push(payment.pedido);
     state.caja = AmorCash.registrarGasto(payment.caja, '30', 'Hielo · ejemplo', at(35));
-    state.caja = AmorCash.registrarPropina(state.caja, '20', 'efectivo', at(30));
-    state.caja = AmorCash.configurarRepartoPropinas(state.caja, { tipo: 'igual', personas: 2 });
+    state.caja = AmorCash.registrarPropina(state.caja, '20', 'separado', at(30));
     const food = Object.values(menuDB.Alimentos).flat()[0];
     const drink = Object.values(menuDB.Bebidas).flat()[0];
     state.pedidos.push(AmorOrders.nuevoPedido([product(food.id), product(drink.id)], 'Mesa 1', 3, at(15)));

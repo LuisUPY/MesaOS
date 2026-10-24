@@ -175,7 +175,7 @@
     return fila;
   }
 
-  function crearCorte(corte, propinas, provisional) {
+  function crearCorte(corte, provisional) {
     const ticket = elemento('section', 'comanda-ticket corte-ticket');
     ticket.dataset.area = 'CORTE';
     const cabecera = elemento('header', 'comanda-cabecera');
@@ -188,10 +188,8 @@
       ['Fondo inicial', 'fondoInicialCentavos', ''],
       ['Ventas en efectivo', 'ventasEfectivoCentavos', ''],
       ['Gastos extra', 'gastosExtrasCentavos', ''],
-      ['Propinas en efectivo', 'propinasEfectivoCentavos', ''],
       ['Efectivo esperado', 'efectivoEsperadoCentavos', 'corte-destacado'],
       ['Ventas en tarjeta/transferencia', 'ventasTarjetaCentavos', ''],
-      ['Propinas en tarjeta/transferencia', 'propinasTarjetaCentavos', ''],
       ['TOTAL VENTAS', 'totalVentasCentavos', 'corte-total'],
       ['TOTAL PROPINAS', 'totalPropinasCentavos', 'corte-total']
     ]) resumen.append(filaCorte(etiqueta, corte[clave], clase));
@@ -208,22 +206,7 @@
     }
     ticket.append(gastos);
 
-    const reparto = elemento('section', 'corte-seccion');
-    reparto.append(elemento('h4', '', 'REPARTO DE PROPINAS'));
-    if (!propinas.configurado) reparto.append(elemento('p', '', 'Reparto sin configurar.'));
-    else {
-      const iguales = corte.repartoPropinas.tipo === 'igual';
-      const personas = propinas.reparto.length;
-      reparto.append(elemento('p', '', iguales
-        ? `Partes iguales entre ${personas} ${personas === 1 ? 'persona' : 'personas'}.`
-        : `Por porcentaje entre ${personas} ${personas === 1 ? 'persona' : 'personas'}.`));
-      for (const persona of propinas.reparto) {
-        const etiqueta = iguales ? persona.nombre : `${persona.nombre} (${persona.porcentaje}%)`;
-        reparto.append(filaCorte(etiqueta, persona.montoCentavos));
-      }
-      reparto.append(elemento('p', 'corte-ayuda', 'Reparto calculado al centavo sobre el total de propinas.'));
-    }
-    ticket.append(reparto, elemento('footer', 'comanda-pie', '--- FIN DEL CORTE ---'));
+    ticket.append(elemento('footer', 'comanda-pie', '--- FIN DEL CORTE ---'));
     return ticket;
   }
 
@@ -233,7 +216,6 @@
     let copia;
     let comandas;
     let fechaHora;
-    let propinas;
     try {
       if (typeof window === 'undefined' || typeof window.print !== 'function') throw new Error('Este navegador no permite imprimir.');
       zona = document.getElementById('zona-impresion');
@@ -245,7 +227,6 @@
         // La instantánea debe tener movimientos y sumas válidas, tanto al
         // reimprimir un cierre guardado como al previsualizar el cierre actual.
         copia = AmorCash.normalizarCorte(copia);
-        propinas = AmorCash.resumirPropinas(copia);
       } else {
         if (!Number.isSafeInteger(copia?.numero) || copia.numero < 1) throw new Error('El número de pedido no es válido.');
         comandas = separarComandas(copia);
@@ -333,7 +314,7 @@
       try {
         zona.replaceChildren();
         if (tipo === 'corte') {
-          tickets.push(crearCorte(copia, propinas, opciones.provisional));
+          tickets.push(crearCorte(copia, opciones.provisional));
           areas.push('CORTE');
         } else if (tipo === 'cuenta') {
           tickets.push(crearCuenta(copia, fechaHora));

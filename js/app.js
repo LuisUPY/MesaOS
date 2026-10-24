@@ -66,7 +66,7 @@
     return state.preajuste ? state.preajuste + ($('order-label').value ? ` · ${$('order-label').value}` : '') : $('order-label').value;
   }
   function restaurarEtiqueta(etiqueta) {
-    const match = etiqueta.match(/^(Mesa [1-8]|Delivery)(?: · (.*))?$/s);
+    const match = etiqueta.match(/^(Mesa [1-8]|Mostrador|Delivery)(?: · (.*))?$/s);
     state.preajuste = match ? match[1] : '';
     $('order-label').value = match ? match[2] || '' : etiqueta;
     actualizarPreajustes();
@@ -88,9 +88,10 @@
     $('order-label').maxLength = etiqueta ? 60 - etiqueta.length - 3 : 60;
   }
   function renderPreajustes() {
-    $('order-label-presets').replaceChildren(...[...Array.from({ length: 8 }, (_, i) => `Mesa ${i + 1}`), 'Delivery'].map(etiqueta => {
+    $('order-label-presets').replaceChildren(...[...Array.from({ length: 7 }, (_, i) => `Mesa ${i + 1}`), 'Mostrador', 'Delivery'].map(etiqueta => {
       const preset = button(etiqueta, 'label-preset', () => {
         state.preajuste = etiqueta;
+        $('order-label').value = '';
         actualizarPreajustes();
         $('order-label').value = $('order-label').value.slice(0, $('order-label').maxLength);
         saveDraft();
@@ -580,7 +581,7 @@
     else headerToggle.setAttribute('aria-expanded', 'true');
   });
   headerControls.addEventListener('click', event => {
-    if (event.target.closest('button:not(:disabled), a')) closeHeaderMenu();
+    if (!event.target.closest('#cash-tips') && event.target.closest('button:not(:disabled), a')) closeHeaderMenu();
   });
   document.addEventListener('click', event => {
     if (!headerControls.contains(event.target) && !headerToggle.contains(event.target)) closeHeaderMenu();
@@ -592,7 +593,7 @@
   });
   for (const menu of menus) {
     menu.addEventListener('toggle', () => { if (menu.open) for (const other of menus) if (other !== menu) other.open = false; });
-    menu.querySelector('nav').addEventListener('click', event => { if (event.target.closest('button:not(:disabled), a')) menu.open = false; });
+    menu.querySelector('nav').addEventListener('click', event => { if (!event.target.closest('#cash-tips') && event.target.closest('button:not(:disabled), a')) menu.open = false; });
   }
   document.addEventListener('click', event => { for (const menu of menus) if (!menu.contains(event.target)) menu.open = false; });
   document.addEventListener('keydown', event => {

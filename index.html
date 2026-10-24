@@ -8,8 +8,8 @@
   <title>MesaOS · Plantilla maestra</title>
   <script src="js/motion.js"></script>
   <link rel="stylesheet" href="css/styles.css?v=20261024-harmony2">
-  <link rel="stylesheet" href="css/pos-features.css?v=20261024-compact-add1">
-  <link rel="stylesheet" href="css/cash-print.css?v=20261020-mono1">
+  <link rel="stylesheet" href="css/pos-features.css?v=20261024-unified-toolbar1">
+  <link rel="stylesheet" href="css/cash-print.css?v=20261024-opening-field1">
   <link rel="stylesheet" href="css/installation.css?v=20261020-orders1">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/jpeg" href="assets/platform/mesaos-logo-icon.jpeg">
@@ -20,17 +20,17 @@
   <script src="js/orderCore.js" defer></script>
   <script src="js/orders.js" defer></script>
   <script src="js/history.js" defer></script>
-  <script src="js/cash.js" defer></script>
+  <script src="js/cash.js?v=20261024-simple-tips1" defer></script>
   <script src="js/storage.js" defer></script>
   <script src="js/demo-session.js" defer></script>
   <script src="js/media.js" defer></script>
   <script src="js/order-effects.js" defer></script>
   <script src="js/salesUI.js?v=20261024-harmony3" defer></script>
-  <script src="js/cashUI.js?v=20261024-harmony1" defer></script>
+  <script src="js/cashUI.js?v=20261024-simple-tips1" defer></script>
   <script src="js/menuSettings.js" defer></script>
   <script src="js/ticketSettings.js" defer></script>
-  <script src="js/printing.js" defer></script>
-  <script src="js/app.js?v=20261024-cleanup2" defer></script>
+  <script src="js/printing.js?v=20261024-simple-tips1" defer></script>
+  <script src="js/app.js?v=20261024-unified-toolbar1" defer></script>
 </head>
 <body>
   <section id="template-notice" hidden aria-label="Demostración interactiva"></section>
@@ -49,7 +49,17 @@
           </div>
           <button id="cash-open-button" type="button">Abrir caja</button>
           <button id="cash-expense-button" type="button" disabled>Registrar gasto extra</button>
-          <button id="cash-tips-button" type="button" disabled>Propinas y reparto</button>
+          <details id="cash-tips" class="cash-tips">
+            <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9 4 5l5 2a8 8 0 0 1 11 5h2v5h-3l-1 4h-3l-1-3H9l-1 3H5l-1-4a6 6 0 0 1-2-5V9h3ZM10 6V3h5M11 10h4"/><circle cx="17" cy="11" r=".7"/><path d="M2 12H1"/></svg>Propinas</summary>
+            <div class="cash-tips-content">
+              <span>Total reunido</span><strong id="tips-total">$0.00</strong>
+              <form id="cash-tip-form" novalidate>
+                <label for="cash-tip-amount">Monto ($)<input id="cash-tip-amount" type="text" inputmode="decimal" maxlength="12" placeholder="0.00" required></label>
+                <p id="cash-tip-error" class="form-error" role="alert" hidden></p>
+                <button id="cash-tip-add" type="submit" class="secondary-button">Añadir propina</button>
+              </form>
+            </div>
+          </details>
           <button id="cash-close-button" type="button" disabled>Corte de caja</button>
           <button id="cash-history-button" type="button">Cortes guardados</button>
         </nav>
@@ -75,8 +85,8 @@
       <h1 id="catalog-title" class="sr-only">Menú</h1>
       <div id="macro-tabs" class="macro-tabs" role="tablist" aria-label="Categorías del menú"></div>
       <section id="catalog-panel" role="tabpanel" aria-labelledby="tab-alimentos">
-        <div class="filter-row"><div id="subcategory-chips" class="subcategory-chips" role="group" aria-label="Subcategorías"></div></div>
         <div class="catalog-toolbar">
+          <div class="filter-row"><div id="subcategory-chips" class="subcategory-chips" role="group" aria-label="Subcategorías"></div></div>
           <label class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg><span class="sr-only">Buscar en todo el menú</span><input id="product-search" type="search" placeholder="Buscar en todo el menú…" autocomplete="off" aria-describedby="global-search-note"></label>
           <div class="grid-controls" role="group" aria-label="Productos por fila"><button id="grid-less" type="button" aria-label="Menos productos por fila" disabled>−</button><span id="grid-columns" role="status" aria-live="polite" aria-label="2 productos por fila">2</span><button id="grid-more" type="button" aria-label="Más productos por fila">+</button></div>
         </div>
@@ -255,44 +265,11 @@
     </form>
   </dialog>
 
-  <dialog id="cash-tips-dialog" class="modal cash-modal tips-modal" aria-labelledby="cash-tips-title">
-    <div class="modal-heading"><div><p class="eyebrow">PARA EL EQUIPO</p><h2 id="cash-tips-title">Propinas del turno</h2></div><button type="button" class="close-button" data-close aria-label="Cerrar propinas">×</button></div>
-    <p class="modal-description">Registra las propinas recibidas y acuerda cómo repartirlas al cerrar.</p>
-    <div class="tips-collected"><span>Total recolectado</span><strong id="tips-total">$0.00</strong><p id="tips-methods"></p></div>
-    <form id="cash-tip-form" novalidate>
-      <h3>Registrar propina</h3>
-      <div class="tips-input-row">
-        <label class="cash-field" for="cash-tip-amount">Monto ($)<input id="cash-tip-amount" type="text" inputmode="decimal" maxlength="12" placeholder="0" required></label>
-        <label class="cash-field" for="cash-tip-method">Recibida en<select id="cash-tip-method"><option value="efectivo">Efectivo</option><option value="tarjeta">Tarjeta / transferencia</option></select></label>
-      </div>
-      <p id="cash-tip-error" class="form-error" role="alert" hidden></p>
-      <button type="submit" class="secondary-button">Guardar propina</button>
-    </form>
-    <details class="cash-expenses tips-records"><summary id="tips-records-title">Propinas registradas</summary><ul id="tips-records-list"></ul></details>
-    <form id="tips-split-form" class="tips-split-form" novalidate>
-      <h3>Repartir propinas</h3>
-      <div class="tips-input-row">
-        <label class="cash-field" for="tips-split-type">Forma de reparto<select id="tips-split-type"><option value="igual">Partes iguales</option><option value="porcentaje">Por porcentaje</option></select></label>
-        <label class="cash-field" for="tips-people-count">Número de personas<input id="tips-people-count" type="number" min="1" max="50" step="1" value="2" required></label>
-      </div>
-      <div id="tips-percentages" class="tips-percentages" hidden></div>
-      <p id="tips-split-status" class="group-help" role="status" aria-live="polite"></p>
-      <ul id="tips-split-preview" class="tips-split-list"></ul>
-      <p class="group-help">El reparto se guarda en el corte. Este cálculo no registra una salida de dinero.</p>
-      <p id="tips-split-error" class="form-error" role="alert" hidden></p>
-      <button id="tips-save-split" type="submit" class="primary-button">Guardar reparto</button>
-    </form>
-  </dialog>
-
   <dialog id="cash-close-dialog" class="modal cash-modal" aria-labelledby="cash-close-title">
     <div class="modal-heading"><div><p class="eyebrow">CIERRE DEL TURNO</p><h2 id="cash-close-title">Corte de Caja</h2></div><button type="button" class="close-button" data-close aria-label="Cerrar corte">×</button></div>
     <p id="cash-close-note" class="modal-description"></p>
-    <label class="cash-field" for="cash-daily-tip">Propina del Día ($)<input id="cash-daily-tip" type="number" min="0" max="999999.99" step="0.01" inputmode="decimal" value="0" aria-describedby="cash-daily-tip-help"></label>
-    <p id="cash-daily-tip-help" class="group-help">Total de propinas del turno, incluidas las ya registradas. La diferencia se registra como propina en efectivo al cerrar. Las propinas de tarjeta se capturan en Propinas y reparto.</p>
     <dl id="cash-summary" class="cash-summary"></dl>
     <details class="cash-expenses"><summary id="cash-expenses-title">Conceptos de gastos</summary><ul id="cash-expenses-list"></ul></details>
-    <section id="cash-close-tips" class="cash-cut-tips" aria-label="Reparto de propinas"></section>
-    <button id="cash-close-edit-tips" type="button" class="text-button">Configurar propinas y reparto</button>
     <p class="group-help">Imprimir Corte genera una vista previa del turno abierto. Al cerrar, se guardará el corte con la propina y se abrirá su impresión final. Los pedidos pendientes podrán cobrarse en el siguiente turno.</p>
     <p id="cash-close-error" class="form-error" role="alert" hidden></p>
     <button id="print-current-cut" type="button" class="secondary-button">Imprimir Corte</button>

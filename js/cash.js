@@ -103,12 +103,13 @@ globalThis.AmorCash = (() => {
     return { tipo: 'porcentaje', personas };
   }
   function resumirPropinasSinValidar(turno) {
-    let efectivoCentavos = 0, tarjetaCentavos = 0;
+    let efectivoCentavos = 0, tarjetaCentavos = 0, separadoCentavos = 0;
     for (const propina of turno.propinas) {
       if (propina.metodo === 'efectivo') efectivoCentavos = sumar(efectivoCentavos, propina.montoCentavos);
-      else tarjetaCentavos = sumar(tarjetaCentavos, propina.montoCentavos);
+      else if (propina.metodo === 'tarjeta') tarjetaCentavos = sumar(tarjetaCentavos, propina.montoCentavos);
+      else separadoCentavos = sumar(separadoCentavos, propina.montoCentavos);
     }
-    const totalCentavos = sumar(efectivoCentavos, tarjetaCentavos);
+    const totalCentavos = sumar(sumar(efectivoCentavos, tarjetaCentavos), separadoCentavos);
     const config = turno.repartoPropinas;
     let reparto = [];
     if (config?.tipo === 'igual') {
@@ -168,7 +169,7 @@ globalThis.AmorCash = (() => {
     }
     const propinasNormalizadas = propinas.map(propina => {
       if (!propina || !idValido(propina.id) || ids.has(propina.id) || !entero(propina.montoCentavos) ||
-        propina.montoCentavos < 1 || propina.montoCentavos > 99999999 || !metodos.includes(propina.metodo) ||
+        propina.montoCentavos < 1 || propina.montoCentavos > 99999999 || ![...metodos, 'separado'].includes(propina.metodo) ||
         !fechaValida(propina.fecha) || Date.parse(propina.fecha) < fechaApertura) throw new Error('Propina de caja inválida.');
       ids.add(propina.id);
       return { id: propina.id, montoCentavos: propina.montoCentavos, metodo: propina.metodo, fecha: propina.fecha };
@@ -233,7 +234,7 @@ globalThis.AmorCash = (() => {
   function registrarPropina(caja, monto, metodo, fecha = new Date().toISOString()) {
     const resultado = exigirAbierta(caja);
     const montoCentavos = montoACentavos(monto);
-    if (!metodos.includes(metodo)) throw new Error('Selecciona Efectivo o Tarjeta/Transferencia para la propina.');
+    if (![...metodos, 'separado'].includes(metodo)) throw new Error('Selecciona un registro de propina válido.');
     resultado.propinas.push({ id: `${resultado.turnoId}-propina-${resultado.propinas.length + 1}`,
       montoCentavos, metodo, fecha: fechaDelTurno(resultado, fecha) });
     return normalizarCaja(resultado);
